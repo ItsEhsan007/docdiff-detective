@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocDiff Detective</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <custom-navbar></custom-navbar>
+    
+    <main class="container mx-auto px-4 py-8">
+        <section class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-primary mb-2">DocDiff Detective</h1>
+            <p class="text-xl text-gray-600">Compare engineering documents with precision and generate professional change reports instantly</p>
+        </section>
+
+        <div class="bg-white rounded-xl shadow-lg p-6 max-w-4xl mx-auto">
+            <form id="documentForm" class="space-y-6">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Previous Revision (Rev B)</label>
+                        <div class="flex items-center justify-center w-full">
+                            <label class="flex flex-col w-full h-32 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50 transition cursor-pointer">
+                                <div class="flex flex-col items-center justify-center pt-7">
+                                    <i data-feather="upload" class="w-8 h-8 text-gray-400"></i>
+                                    <p class="pt-1 text-sm text-gray-600">Drop your old document here</p>
+                                    <p class="text-xs text-gray-500">PDF, DWG, or image files</p>
+                                </div>
+                                <input type="file" class="opacity-0" id="oldDocument">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Current Revision (Rev C)</label>
+                        <div class="flex items-center justify-center w-full">
+                            <label class="flex flex-col w-full h-32 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50 transition cursor-pointer">
+                                <div class="flex flex-col items-center justify-center pt-7">
+                                    <i data-feather="upload" class="w-8 h-8 text-gray-400"></i>
+                                    <p class="pt-1 text-sm text-gray-600">Drop your new document here</p>
+                                    <p class="text-xs text-gray-500">PDF, DWG, or image files</p>
+                                </div>
+                                <input type="file" class="opacity-0" id="newDocument">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label for="projectName" class="block text-sm font-medium text-gray-700">Project Name (Optional)</label>
+                        <input type="text" id="projectName" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="documentNumber" class="block text-sm font-medium text-gray-700">Drawing/Document Number (Optional)</label>
+                        <input type="text" id="documentNumber" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label for="discipline" class="block text-sm font-medium text-gray-700">Discipline</label>
+                        <select id="discipline" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                            <option value="">Select a discipline</option>
+                            <option value="Civil">Civil</option>
+                            <option value="Electrical">Electrical</option>
+                            <option value="Mechanical">Mechanical</option>
+                            <option value="Process">Process</option>
+                            <option value="Structural">Structural</option>
+                            <option value="Instrumentation">Instrumentation</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Previous Revision</label>
+                            <input type="text" id="prevRev" value="Rev B" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Current Revision</label>
+                            <input type="text" id="currRev" value="Rev C" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition">
+                        Analyze Documents
+                        <i data-feather="chevron-right" class="ml-2 w-4 h-4"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="resultContainer" class="hidden mt-12 bg-white rounded-xl shadow-lg p-6 max-w-6xl mx-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Design Change Summary Report</h2>
+                <button id="copyReport" class="flex items-center text-sm text-primary hover:text-primary-700">
+                    <i data-feather="copy" class="w-4 h-4 mr-1"></i> Copy Report
+                </button>
+            </div>
+
+            <div id="reportContent" class="prose max-w-none">
+                <!-- Report will be inserted here -->
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Machine Output (JSON)</h3>
+                <pre id="jsonOutput" class="bg-gray-50 p-4 rounded-md text-sm overflow-x-auto"></pre>
+            </div>
+        </div>
+    </main>
+
+    <custom-footer></custom-footer>
+
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <script src="script.js"></script>
+    <script>feather.replace();</script>
+<script src="https://huggingface.co/deepsite/deepsite-badge.js"></script>
+</body>
+</html>
