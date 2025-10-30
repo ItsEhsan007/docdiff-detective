@@ -3,17 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DocDiff Detective - Document Comparison Tool</title>
+    <title>DocDiff Detective - Professional Document Comparison Tool</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/diff/5.1.0/diff.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
             --accent-color: #e74c3c;
+            --success-color: #27ae60;
             --light-gray: #f5f7fa;
             --medium-gray: #e1e8ed;
             --dark-gray: #7f8c8d;
             --text-color: #2c3e50;
-            --border-radius: 4px;
+            --border-radius: 8px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         
         * {
@@ -24,144 +30,182 @@
         }
         
         body {
-            background-color: var(--light-gray);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             color: var(--text-color);
             line-height: 1.6;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
         
         header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 20px 0;
-            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            text-align: center;
         }
         
         h1 {
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 5px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
         .subtitle {
-            font-size: 16px;
+            font-size: 1.1rem;
+            color: var(--dark-gray);
             font-weight: 400;
-            opacity: 0.9;
         }
         
         .main-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
-            margin-top: 30px;
+            margin-bottom: 30px;
         }
         
         .section {
-            background-color: white;
+            background: white;
             border-radius: var(--border-radius);
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 25px;
+            box-shadow: var(--shadow);
         }
         
         .section-title {
-            font-size: 18px;
+            font-size: 1.4rem;
             font-weight: 600;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             color: var(--primary-color);
-            border-bottom: 1px solid var(--medium-gray);
+            border-bottom: 2px solid var(--light-gray);
             padding-bottom: 10px;
         }
         
-        .document-info {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+        .document-card {
+            border: 2px dashed var(--medium-gray);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            background: var(--light-gray);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
         }
         
-        .document-card {
-            border: 1px solid var(--medium-gray);
-            border-radius: var(--border-radius);
-            padding: 15px;
-            background-color: var(--light-gray);
+        .document-card.ready {
+            border-color: var(--success-color);
+            background: rgba(39, 174, 96, 0.05);
         }
         
         .document-name {
             font-weight: 600;
-            margin-bottom: 5px;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
         }
         
         .document-meta {
-            font-size: 14px;
+            font-size: 0.9rem;
             color: var(--dark-gray);
+            line-height: 1.4;
         }
         
         .status {
             display: inline-block;
-            padding: 3px 8px;
-            background-color: #2ecc71;
+            padding: 6px 12px;
+            background: #f39c12;
             color: white;
-            border-radius: 12px;
-            font-size: 12px;
-            margin-top: 5px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 8px;
         }
         
-        .file-upload-area {
+        .status.ready {
+            background: var(--success-color);
+        }
+        
+        .status.processing {
+            background: var(--secondary-color);
+        }
+        
+        .upload-area {
             border: 2px dashed var(--medium-gray);
             border-radius: var(--border-radius);
-            padding: 25px;
+            padding: 30px;
             text-align: center;
-            margin-top: 15px;
+            margin: 20px 0;
             cursor: pointer;
             transition: all 0.3s ease;
+            background: white;
         }
         
-        .file-upload-area:hover {
+        .upload-area:hover {
             border-color: var(--secondary-color);
-            background-color: rgba(52, 152, 219, 0.05);
+            background: rgba(52, 152, 219, 0.05);
+        }
+        
+        .upload-area.dragover {
+            border-color: var(--success-color);
+            background: rgba(39, 174, 96, 0.1);
         }
         
         .upload-icon {
-            font-size: 40px;
-            color: var(--dark-gray);
-            margin-bottom: 10px;
-        }
-        
-        .upload-text {
+            font-size: 3rem;
             color: var(--dark-gray);
             margin-bottom: 15px;
         }
         
+        .upload-text {
+            color: var(--dark-gray);
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+        
         .btn {
-            padding: 10px 20px;
+            padding: 12px 24px;
             border: none;
             border-radius: var(--border-radius);
             cursor: pointer;
             font-weight: 600;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .btn-primary {
-            background-color: var(--secondary-color);
+            background: var(--secondary-color);
             color: white;
         }
         
-        .btn-secondary {
-            background-color: var(--medium-gray);
-            color: var(--text-color);
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #219653;
+            transform: translateY(-2px);
         }
         
         .btn-danger {
-            background-color: var(--accent-color);
+            background: var(--accent-color);
             color: white;
         }
         
-        .btn:hover {
-            opacity: 0.9;
+        .btn-danger:hover {
+            background: #c0392b;
             transform: translateY(-2px);
         }
         
@@ -171,274 +215,184 @@
             transform: none;
         }
         
-        .comparison-section {
-            margin-top: 30px;
-            text-align: center;
+        .progress-container {
+            margin: 20px 0;
         }
         
-        .sync-checkbox {
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--medium-gray);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-color), var(--success-color));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            font-weight: 500;
+        }
+        
+        .comparison-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: var(--shadow);
+        }
+        
+        .sync-controls {
             display: flex;
-            align-items: center;
             justify-content: center;
-            gap: 8px;
+            align-items: center;
+            gap: 15px;
             margin: 20px 0;
         }
         
         .document-viewer {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
+            gap: 25px;
+            margin-top: 25px;
         }
         
         .viewer-container {
             border: 1px solid var(--medium-gray);
             border-radius: var(--border-radius);
             overflow: hidden;
-            height: 500px;
-            position: relative;
+            height: 600px;
+            box-shadow: var(--shadow);
         }
         
         .viewer-header {
-            background-color: var(--primary-color);
+            background: var(--primary-color);
             color: white;
-            padding: 10px 15px;
+            padding: 15px 20px;
             font-weight: 600;
+            font-size: 1.1rem;
         }
         
         .document-content {
-            height: calc(100% - 40px);
+            height: calc(100% - 60px);
             overflow-y: auto;
-            padding: 15px;
-            background-color: white;
-        }
-        
-        .empty-state {
-            color: var(--dark-gray);
-            font-style: italic;
-            text-align: center;
-            padding: 40px 20px;
-        }
-        
-        .document-text {
+            padding: 20px;
+            background: white;
             line-height: 1.8;
             font-family: 'Courier New', monospace;
             white-space: pre-wrap;
         }
         
         .changes-section {
-            margin-top: 30px;
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: var(--shadow);
         }
         
         .changes-list {
             min-height: 200px;
-            border: 1px dashed var(--medium-gray);
+            max-height: 400px;
+            overflow-y: auto;
+            border: 2px dashed var(--medium-gray);
             border-radius: var(--border-radius);
             padding: 20px;
+            margin: 20px 0;
         }
         
         .change-item {
-            background-color: #fff9e6;
+            background: #fff9e6;
             border-left: 4px solid #f1c40f;
-            padding: 10px 15px;
-            margin-bottom: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
             border-radius: 0 var(--border-radius) var(--border-radius) 0;
         }
         
         .change-added {
-            background-color: #e8f8f5;
-            border-left-color: #2ecc71;
+            background: #e8f8f5;
+            border-left-color: var(--success-color);
         }
         
         .change-removed {
-            background-color: #fdedec;
-            border-left-color: #e74c3c;
-        }
-        
-        .highlight {
-            background-color: rgba(255, 255, 0, 0.3);
-            padding: 2px 0;
-        }
-        
-        .highlight-added {
-            background-color: rgba(46, 204, 113, 0.3);
-        }
-        
-        .highlight-removed {
-            background-color: rgba(231, 76, 60, 0.3);
-            text-decoration: line-through;
+            background: #fdedec;
+            border-left-color: var(--accent-color);
         }
         
         .action-buttons {
             display: flex;
             gap: 15px;
-            margin-top: 20px;
             justify-content: center;
+            margin-top: 25px;
+        }
+        
+        .report-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: var(--shadow);
+        }
+        
+        .report-content {
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 25px;
+            background: var(--light-gray);
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+        }
+        
+        .highlight-added {
+            background: rgba(39, 174, 96, 0.3);
+            padding: 2px 1px;
+            border-radius: 2px;
+        }
+        
+        .highlight-removed {
+            background: rgba(231, 76, 60, 0.3);
+            padding: 2px 1px;
+            border-radius: 2px;
+            text-decoration: line-through;
+        }
+        
+        .file-info {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            margin-top: 5px;
         }
         
         .hidden {
             display: none;
         }
         
-        .file-input {
-            display: none;
+        .empty-state {
+            text-align: center;
+            color: var(--dark-gray);
+            font-style: italic;
+            padding: 40px 20px;
         }
         
-        .compare-btn-container {
-            text-align: center;
-            margin: 25px 0;
-        }
-
-        .info-form {
-            background: var(--light-gray);
-            padding: 15px;
-            border-radius: var(--border-radius);
-            margin-top: 15px;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--dark-gray);
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid var(--medium-gray);
-            border-radius: var(--border-radius);
-            font-size: 14px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background-color: var(--medium-gray);
-            border-radius: 3px;
-            margin: 10px 0;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background-color: var(--secondary-color);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .upload-status {
-            text-align: center;
-            font-size: 14px;
-            color: var(--dark-gray);
-            margin-top: 5px;
-        }
-
-        .submit-btn {
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        /* Report Section Styles */
-        .report-section {
-            margin-top: 40px;
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .report-header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid var(--primary-color);
-        }
-
-        .report-title {
-            font-size: 24px;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        .report-meta {
-            color: var(--dark-gray);
-            font-size: 14px;
-        }
-
-        .report-content {
-            max-height: 600px;
-            overflow-y: auto;
-            padding: 20px;
-            background: var(--light-gray);
-            border-radius: var(--border-radius);
-        }
-
-        .report-section h3 {
-            color: var(--primary-color);
-            margin: 25px 0 15px 0;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--medium-gray);
-        }
-
-        .report-section h4 {
-            color: var(--secondary-color);
-            margin: 20px 0 10px 0;
-        }
-
-        .report-summary {
-            background: white;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            margin-bottom: 25px;
-            border-left: 4px solid var(--secondary-color);
-        }
-
-        .change-analysis {
-            background: white;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            margin-bottom: 15px;
-        }
-
-        .change-analysis h5 {
-            color: var(--accent-color);
-            margin-bottom: 10px;
-        }
-
-        .impact-assessment {
-            background: #e8f4f8;
-            padding: 15px;
-            border-radius: var(--border-radius);
-            margin: 10px 0;
-            border-left: 3px solid var(--secondary-color);
-        }
-
-        .conclusion {
-            background: #f0f8f0;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            margin-top: 25px;
-            border-left: 4px solid #2ecc71;
-        }
-
-        .stat-box {
-            background: white;
-            padding: 15px;
-            border-radius: var(--border-radius);
-            margin: 10px 0;
-            border: 1px solid var(--medium-gray);
-        }
-
-        .stat-number {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--secondary-color);
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .document-viewer {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -451,530 +405,553 @@
 
         <div class="main-content">
             <div class="section">
-                <h2 class="section-title">Document Comparison</h2>
-                <div class="document-info">
-                    <div>
-                        <h3>Previous Revision</h3>
-                        <div class="document-card" id="doc1-card">
-                            <div class="document-name" id="doc1-name">No file selected</div>
-                            <div class="document-meta" id="doc1-meta">Upload a document to compare</div>
-                            <div class="status" style="background-color: #f39c12;" id="doc1-status">Waiting for upload</div>
-                        </div>
-                        
-                        <div class="file-upload-area" id="doc1-upload">
-                            <div class="upload-icon">📄</div>
-                            <div class="upload-text">Click to upload previous revision</div>
-                            <input type="file" id="doc1-file" class="file-input" accept=".txt,.pdf,.doc,.docx">
-                            <button class="btn btn-secondary" onclick="document.getElementById('doc1-file').click()">Choose File</button>
-                            
-                            <div class="progress-bar hidden" id="doc1-progress">
-                                <div class="progress-fill" id="doc1-progress-fill"></div>
-                            </div>
-                            <div class="upload-status" id="doc1-status-text"></div>
-                        </div>
-
-                        <div class="info-form" id="doc1-form">
-                            <div class="form-group">
-                                <label for="doc1-title">Document Title</label>
-                                <input type="text" id="doc1-title" placeholder="e.g., TEST - REVISION 1">
-                            </div>
-                            <div class="form-group">
-                                <label for="doc1-type">Document Type</label>
-                                <select id="doc1-type">
-                                    <option value="pdf">PDF</option>
-                                    <option value="doc">Word Document</option>
-                                    <option value="txt">Text File</option>
-                                    <option value="other">Other</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="doc1-size">File Size (KB)</label>
-                                <input type="number" id="doc1-size" placeholder="e.g., 63">
-                            </div>
-                            <div class="form-group">
-                                <label for="doc1-notes">Notes</label>
-                                <input type="text" id="doc1-notes" placeholder="Optional notes about this revision">
-                            </div>
-                            <button class="btn btn-primary submit-btn" onclick="submitDocumentInfo(1)">Submit Document Info</button>
-                        </div>
+                <h2 class="section-title">Previous Revision</h2>
+                <div class="document-card" id="doc1-card">
+                    <div class="document-name" id="doc1-name">No document selected</div>
+                    <div class="document-meta" id="doc1-meta">Upload a document to begin comparison</div>
+                    <div class="status" id="doc1-status">Waiting for upload</div>
+                </div>
+                
+                <div class="upload-area" id="doc1-upload">
+                    <div class="upload-icon">📄</div>
+                    <div class="upload-text">Drag & drop your previous revision here or click to browse</div>
+                    <input type="file" id="doc1-file" class="hidden" accept=".pdf,.doc,.docx,.txt">
+                    <button class="btn btn-primary" onclick="document.getElementById('doc1-file').click()">Select File</button>
+                </div>
+                
+                <div class="progress-container hidden" id="doc1-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="doc1-progress-fill"></div>
                     </div>
+                    <div class="progress-text" id="doc1-progress-text">Processing...</div>
                 </div>
             </div>
 
             <div class="section">
                 <h2 class="section-title">Content Revision</h2>
-                <div class="document-info">
-                    <div>
-                        <div class="document-card" id="doc2-card">
-                            <div class="document-name" id="doc2-name">No file selected</div>
-                            <div class="document-meta" id="doc2-meta">Upload a document to compare</div>
-                            <div class="status" style="background-color: #f39c12;" id="doc2-status">Waiting for upload</div>
-                        </div>
-                        
-                        <div class="file-upload-area" id="doc2-upload">
-                            <div class="upload-icon">📄</div>
-                            <div class="upload-text">Click to upload content revision</div>
-                            <input type="file" id="doc2-file" class="file-input" accept=".txt,.pdf,.doc,.docx">
-                            <button class="btn btn-secondary" onclick="document.getElementById('doc2-file').click()">Choose File</button>
-                            
-                            <div class="progress-bar hidden" id="doc2-progress">
-                                <div class="progress-fill" id="doc2-progress-fill"></div>
-                            </div>
-                            <div class="upload-status" id="doc2-status-text"></div>
-                        </div>
+                <div class="document-card" id="doc2-card">
+                    <div class="document-name" id="doc2-name">No document selected</div>
+                    <div class="document-meta" id="doc2-meta">Upload a document to begin comparison</div>
+                    <div class="status" id="doc2-status">Waiting for upload</div>
+                </div>
+                
+                <div class="upload-area" id="doc2-upload">
+                    <div class="upload-icon">📄</div>
+                    <div class="upload-text">Drag & drop your content revision here or click to browse</div>
+                    <input type="file" id="doc2-file" class="hidden" accept=".pdf,.doc,.docx,.txt">
+                    <button class="btn btn-primary" onclick="document.getElementById('doc2-file').click()">Select File</button>
+                </div>
+                
+                <div class="progress-container hidden" id="doc2-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="doc2-progress-fill"></div>
+                    </div>
+                    <div class="progress-text" id="doc2-progress-text">Processing...</div>
+                </div>
+            </div>
+        </div>
 
-                        <div class="info-form" id="doc2-form">
-                            <div class="form-group">
-                                <label for="doc2-title">Document Title</label>
-                                <input type="text" id="doc2-title" placeholder="e.g., TEST - REVISION 2">
-                            </div>
-                            <div class="form-group">
-                                <label for="doc2-type">Document Type</label>
-                                <select id="doc2-type">
-                                    <option value="pdf">PDF</option>
-                                    <option value="doc">Word Document</option>
-                                    <option value="txt">Text File</option>
-                                    <option value="other">Other</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="doc2-size">File Size (KB)</label>
-                                <input type="number" id="doc2-size" placeholder="e.g., 68">
-                            </div>
-                            <div class="form-group">
-                                <label for="doc2-notes">Notes</label>
-                                <input type="text" id="doc2-notes" placeholder="Optional notes about this revision">
-                            </div>
-                            <button class="btn btn-primary submit-btn" onclick="submitDocumentInfo(2)">Submit Document Info</button>
-                        </div>
+        <div class="comparison-section hidden" id="comparison-section">
+            <h2 class="section-title">Document Comparison</h2>
+            
+            <div class="sync-controls">
+                <input type="checkbox" id="sync-scrolling" checked>
+                <label for="sync-scrolling">Sync scrolling between documents</label>
+            </div>
+
+            <div class="document-viewer">
+                <div class="viewer-container">
+                    <div class="viewer-header" id="doc1-viewer-header">Previous Revision</div>
+                    <div class="document-content" id="doc1-content">
+                        <div class="empty-state">Document content will appear here after processing</div>
+                    </div>
+                </div>
+
+                <div class="viewer-container">
+                    <div class="viewer-header" id="doc2-viewer-header">Content Revision</div>
+                    <div class="document-content" id="doc2-content">
+                        <div class="empty-state">Document content will appear here after processing</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="compare-btn-container">
-            <button class="btn btn-primary" id="compare-btn" disabled>Compare Documents</button>
-        </div>
-
-        <div class="comparison-section">
-            <h3>Scroll to compare documents</h3>
-            <div class="sync-checkbox">
-                <input type="checkbox" id="sync-scrolling" checked>
-                <label for="sync-scrolling">Sync scrolling between documents</label>
-            </div>
-        </div>
-
-        <div class="document-viewer">
-            <div class="viewer-container">
-                <div class="viewer-header" id="doc1-viewer-header">Previous Revision</div>
-                <div class="document-content" id="doc1-content">
-                    <div class="empty-state">Upload a document and submit info to see content</div>
-                </div>
-            </div>
-
-            <div class="viewer-container">
-                <div class="viewer-header" id="doc2-viewer-header">Content Revision</div>
-                <div class="document-content" id="doc2-content">
-                    <div class="empty-state">Upload a document and submit info to see content</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="section changes-section">
-            <h2 class="section-title">Document Changes Detected</h2>
-            <p>Add the changes you observe between the two revisions.</p>
+        <div class="changes-section hidden" id="changes-section">
+            <h2 class="section-title">Detected Changes</h2>
             
             <div class="changes-list" id="changes-container">
-                <div class="empty-state">No changes added yet. Click "Add Change" to start documenting.</div>
+                <div class="empty-state">No changes detected yet. Upload and compare documents to see changes.</div>
             </div>
             
             <div class="action-buttons">
-                <button class="btn btn-primary" id="add-change-btn">+ Add Change</button>
-                <button class="btn btn-secondary" id="auto-detect-btn">Auto-Detect Changes</button>
-                <button class="btn btn-danger" id="generate-report-btn">Generate Report</button>
+                <button class="btn btn-primary" id="add-change-btn">+ Add Manual Change</button>
+                <button class="btn btn-success" id="auto-detect-btn">Re-analyze Changes</button>
+                <button class="btn btn-danger" id="generate-report-btn">Generate Comprehensive Report</button>
             </div>
         </div>
 
-        <!-- Report Section -->
         <div class="report-section hidden" id="report-section">
-            <div class="report-header">
-                <h2 class="report-title">Document Comparison Analysis Report</h2>
-                <div class="report-meta" id="report-meta">Generated on Loading...</div>
-            </div>
-            
+            <h2 class="section-title">Comprehensive Analysis Report</h2>
             <div class="report-content" id="report-content">
-                <!-- Report content will be generated here -->
+                <div class="empty-state">Report will be generated here after analysis</div>
             </div>
         </div>
     </div>
 
     <script>
-        // Document content storage
-        let doc1Content = '';
-        let doc2Content = '';
-        let doc1FileName = '';
-        let doc2FileName = '';
-        let doc1Info = {};
-        let doc2Info = {};
+        // Set up PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        // File upload handlers
-        document.getElementById('doc1-file').addEventListener('change', function(e) {
-            handleFileUpload(e, 1);
-        });
+        class DocDiffDetective {
+            constructor() {
+                this.doc1 = { content: '', fileName: '', fileSize: 0, fileType: '' };
+                this.doc2 = { content: '', fileName: '', fileSize: 0, fileType: '' };
+                this.changes = [];
+                this.init();
+            }
 
-        document.getElementById('doc2-file').addEventListener('change', function(e) {
-            handleFileUpload(e, 2);
-        });
+            init() {
+                this.setupEventListeners();
+                this.setupDragAndDrop();
+            }
 
-        function handleFileUpload(event, docNumber) {
-            const file = event.target.files[0];
-            if (!file) return;
+            setupEventListeners() {
+                // File input listeners
+                document.getElementById('doc1-file').addEventListener('change', (e) => this.handleFileUpload(e, 1));
+                document.getElementById('doc2-file').addEventListener('change', (e) => this.handleFileUpload(e, 2));
 
-            const fileName = file.name;
-            const fileSize = (file.size / 1024).toFixed(2);
-            const fileType = file.type || 'Unknown';
+                // Button listeners
+                document.getElementById('add-change-btn').addEventListener('click', () => this.addManualChange());
+                document.getElementById('auto-detect-btn').addEventListener('click', () => this.analyzeChanges());
+                document.getElementById('generate-report-btn').addEventListener('click', () => this.generateReport());
 
-            // Show progress bar
-            const progressBar = document.getElementById(`doc${docNumber}-progress`);
-            const progressFill = document.getElementById(`doc${docNumber}-progress-fill`);
-            const statusText = document.getElementById(`doc${docNumber}-status-text`);
-            
-            progressBar.classList.remove('hidden');
-            statusText.textContent = 'Starting upload...';
+                // Sync scrolling
+                document.getElementById('sync-scrolling').addEventListener('change', (e) => this.setupSyncScrolling(e.target.checked));
+            }
 
-            // Simulate upload progress
-            let progress = 0;
-            const progressInterval = setInterval(() => {
-                progress += Math.random() * 15;
-                if (progress > 100) progress = 100;
+            setupDragAndDrop() {
+                const uploadAreas = ['doc1-upload', 'doc2-upload'];
                 
-                progressFill.style.width = `${progress}%`;
-                statusText.textContent = `Uploading... ${Math.round(progress)}%`;
-                
-                if (progress === 100) {
-                    clearInterval(progressInterval);
-                    statusText.textContent = 'Upload complete!';
+                uploadAreas.forEach(areaId => {
+                    const area = document.getElementById(areaId);
                     
-                    // Update UI after upload
-                    setTimeout(() => {
-                        document.getElementById(`doc${docNumber}-name`).textContent = fileName;
-                        document.getElementById(`doc${docNumber}-meta`).innerHTML = `YOUR Uploaded file<br>Size: ${fileSize} KB | Type: ${fileType}<br>Uploaded: Just now`;
-                        document.getElementById(`doc${docNumber}-status`).textContent = 'Ready for comparison';
-                        document.getElementById(`doc${docNumber}-status`).style.backgroundColor = '#2ecc71';
-                        
-                        // Pre-fill form with file info
-                        document.getElementById(`doc${docNumber}-title`).value = fileName.replace(/\.[^/.]+$/, ""); // Remove extension
-                        document.getElementById(`doc${docNumber}-size`).value = Math.round(fileSize);
-                        
-                        // Auto-detect file type
-                        if (file.name.endsWith('.pdf')) {
-                            document.getElementById(`doc${docNumber}-type`).value = 'pdf';
-                        } else if (file.name.endsWith('.doc') || file.name.endsWith('.docx')) {
-                            document.getElementById(`doc${docNumber}-type`).value = 'doc';
-                        } else if (file.name.endsWith('.txt')) {
-                            document.getElementById(`doc${docNumber}-type`).value = 'txt';
+                    area.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        area.classList.add('dragover');
+                    });
+                    
+                    area.addEventListener('dragleave', () => {
+                        area.classList.remove('dragover');
+                    });
+                    
+                    area.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        area.classList.remove('dragover');
+                        const files = e.dataTransfer.files;
+                        if (files.length > 0) {
+                            const docNumber = areaId === 'doc1-upload' ? 1 : 2;
+                            this.processFile(files[0], docNumber);
                         }
-                    }, 500);
-                }
-            }, 200);
-
-            // Store file info
-            if (docNumber === 1) {
-                doc1FileName = fileName;
-            } else {
-                doc2FileName = fileName;
+                    });
+                });
             }
 
-            // Read file content
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const content = e.target.result;
+            async handleFileUpload(event, docNumber) {
+                const file = event.target.files[0];
+                if (file) {
+                    await this.processFile(file, docNumber);
+                }
+            }
+
+            async processFile(file, docNumber) {
+                this.showProgress(docNumber, 0, 'Starting processing...');
                 
-                if (docNumber === 1) {
-                    doc1Content = content;
-                } else {
-                    doc2Content = content;
-                }
-            };
-            
-            if (file.type.includes('text') || file.name.endsWith('.txt')) {
-                reader.readAsText(file);
-            } else {
-                // For binary files, store placeholder
-                if (docNumber === 1) {
-                    doc1Content = `[Content of ${fileName} would be processed here]`;
-                } else {
-                    doc2Content = `[Content of ${fileName} would be processed here]`;
+                try {
+                    const content = await this.extractTextFromFile(file);
+                    this.updateDocumentInfo(docNumber, file, content);
+                    this.showProgress(docNumber, 100, 'Processing complete!');
+                    
+                    setTimeout(() => {
+                        this.hideProgress(docNumber);
+                        this.checkReadyForComparison();
+                    }, 1000);
+                    
+                } catch (error) {
+                    this.showProgress(docNumber, 0, `Error: ${error.message}`);
+                    console.error('File processing error:', error);
                 }
             }
-        }
 
-        function submitDocumentInfo(docNumber) {
-            const title = document.getElementById(`doc${docNumber}-title`).value;
-            const type = document.getElementById(`doc${docNumber}-type`).value;
-            const size = document.getElementById(`doc${docNumber}-size`).value;
-            const notes = document.getElementById(`doc${docNumber}-notes`).value;
-
-            if (!title) {
-                alert('Please enter a document title');
-                return;
-            }
-
-            // Store document info
-            if (docNumber === 1) {
-                doc1Info = { title, type, size, notes };
-                displayDocumentContent(1, doc1Content, title);
-            } else {
-                doc2Info = { title, type, size, notes };
-                displayDocumentContent(2, doc2Content, title);
-            }
-
-            // Enable compare button if both documents have info
-            if (doc1Info.title && doc2Info.title) {
-                document.getElementById('compare-btn').disabled = false;
-            }
-
-            alert(`Document ${docNumber} info submitted successfully!`);
-        }
-
-        function displayDocumentContent(docNumber, content, title) {
-            const contentElement = document.getElementById(`doc${docNumber}-content`);
-            const headerElement = document.getElementById(`doc${docNumber}-viewer-header`);
-            
-            headerElement.textContent = title;
-            
-            if (content.includes('[') && content.includes(']')) {
-                // Show simulated engineering content
-                const simulatedContent = generateSimulatedContent(title, docNumber);
-                contentElement.innerHTML = `<div class="document-text">${escapeHtml(simulatedContent)}</div>`;
-            } else {
-                // Show actual text content
-                contentElement.innerHTML = `<div class="document-text">${escapeHtml(content)}</div>`;
-            }
-        }
-
-        function generateSimulatedContent(title, docNumber) {
-            if (docNumber === 1) {
-                return `ENGINEERING SPECIFICATION DOCUMENT
-Document: ${title}
-Revision: 1.0
-Date: January 15, 2024
-
-PROJECT: Advanced Sensor Module
-COMPONENT: ASM-2000 Series
-
-1.0 PERFORMANCE SPECIFICATIONS
-- Operating Voltage: 3.3V ±5%
-- Current Consumption: < 15mA (active mode)
-- Temperature Range: -40°C to 85°C
-- Communication: I2C, SPI
-- Sampling Rate: 100 Hz maximum
-
-2.0 MECHANICAL DIMENSIONS
-- Length: 25.0 mm
-- Width: 25.0 mm
-- Height: 5.0 mm
-- Weight: 4.2 grams
-
-3.0 ENVIRONMENTAL RATINGS
-- Operating Temperature: -40°C to 85°C
-- Storage Temperature: -55°C to 125°C
-- Humidity: 5% to 95% non-condensing
-
-4.0 CALIBRATION
-- 3-point calibration required
-- Calibration points: -20°C, 25°C, 70°C
-- Data stored in non-volatile memory
-
-APPROVALS:
-Engineering Manager: _________________
-Quality Assurance: ___________________`;
-            } else {
-                return `ENGINEERING SPECIFICATION DOCUMENT
-Document: ${title}
-Revision: 2.0
-Date: February 20, 2024
-
-PROJECT: Advanced Sensor Module
-COMPONENT: ASM-2000 Series
-
-1.0 PERFORMANCE SPECIFICATIONS
-- Operating Voltage: 3.3V ±10%
-- Current Consumption: < 12mA (active mode)
-- Temperature Range: -45°C to 90°C
-- Communication: I2C, SPI, UART
-- Sampling Rate: 200 Hz maximum
-- NEW: Sleep mode current < 50μA
-
-2.0 MECHANICAL DIMENSIONS
-- Length: 24.5 mm
-- Width: 24.5 mm
-- Height: 4.5 mm
-- Weight: 3.8 grams
-
-3.0 ENVIRONMENTAL RATINGS
-- Operating Temperature: -45°C to 90°C
-- Storage Temperature: -55°C to 125°C
-- Humidity: 5% to 95% non-condensing
-- NEW: IP67 Dust and Water Resistance
-
-4.0 CALIBRATION
-- 5-point calibration required
-- Calibration points: -30°C, 0°C, 25°C, 50°C, 80°C
-- Data stored in non-volatile memory
-
-5.0 QUALITY ASSURANCE (NEW SECTION)
-- 48-hour burn-in test required
-- Failure rate must not exceed 0.1%
-- All units must pass final inspection
-
-APPROVALS:
-Engineering Manager: _________________
-Quality Assurance: ___________________`;
-            }
-        }
-
-        // Compare documents
-        document.getElementById('compare-btn').addEventListener('click', function() {
-            if (!doc1Info.title || !doc2Info.title) {
-                alert('Please submit information for both documents first');
-                return;
-            }
-
-            // Auto-detect and highlight changes
-            autoDetectAndHighlightChanges();
-            
-            // Scroll to comparison section
-            document.querySelector('.comparison-section').scrollIntoView({ 
-                behavior: 'smooth' 
-            });
-        });
-
-        // Auto-detect changes function
-        function autoDetectAndHighlightChanges() {
-            const changesContainer = document.getElementById('changes-container');
-            changesContainer.innerHTML = '';
-            
-            const changes = [
-                { type: 'added', text: 'Revision updated from 1.0 to 2.0' },
-                { type: 'added', text: 'Voltage tolerance increased from ±5% to ±10%' },
-                { type: 'added', text: 'Current consumption reduced from <15mA to <12mA' },
-                { type: 'added', text: 'Temperature range expanded from -40°C/85°C to -45°C/90°C' },
-                { type: 'added', text: 'UART communication interface added' },
-                { type: 'added', text: 'Sleep mode with <50μA current consumption added' },
-                { type: 'added', text: 'Sampling rate increased from 100Hz to 200Hz' },
-                { type: 'added', text: 'Dimensions reduced from 25.0mm to 24.5mm' },
-                { type: 'added', text: 'Height reduced from 5.0mm to 4.5mm' },
-                { type: 'added', text: 'Weight reduced from 4.2g to 3.8g' },
-                { type: 'added', text: 'IP67 dust and water resistance rating added' },
-                { type: 'added', text: 'Calibration points increased from 3 to 5 points' },
-                { type: 'added', text: 'New Quality Assurance section added' }
-            ];
-            
-            changes.forEach(change => {
-                const changeItem = document.createElement('div');
-                changeItem.className = `change-item ${change.type === 'added' ? 'change-added' : 'change-removed'}`;
-                changeItem.innerHTML = `<strong>${change.type === 'added' ? 'Added' : 'Removed'}:</strong> ${change.text}`;
-                changesContainer.appendChild(changeItem);
-            });
-            
-            // Highlight changes in document viewers
-            highlightTextChanges();
-        }
-
-        function highlightTextChanges() {
-            const doc2ContentElement = document.getElementById('doc2-content');
-            const htmlContent = doc2ContentElement.innerHTML;
-            
-            const highlightedContent = htmlContent
-                .replace(/Revision: 2.0/, '<span class="highlight highlight-added">Revision: 2.0</span>')
-                .replace(/Current Consumption: &lt; 12mA/, '<span class="highlight highlight-added">Current Consumption: &lt; 12mA</span>')
-                .replace(/Temperature Range: -45°C to 90°C/, '<span class="highlight highlight-added">Temperature Range: -45°C to 90°C</span>')
-                .replace(/Communication: I2C, SPI, UART/, '<span class="highlight highlight-added">Communication: I2C, SPI, UART</span>')
-                .replace(/Sleep mode current &lt; 50μA/, '<span class="highlight highlight-added">Sleep mode current &lt; 50μA</span>')
-                .replace(/Sampling Rate: 200 Hz maximum/, '<span class="highlight highlight-added">Sampling Rate: 200 Hz maximum</span>')
-                .replace(/Length: 24.5 mm/, '<span class="highlight highlight-added">Length: 24.5 mm</span>')
-                .replace(/Height: 4.5 mm/, '<span class="highlight highlight-added">Height: 4.5 mm</span>')
-                .replace(/Weight: 3.8 grams/, '<span class="highlight highlight-added">Weight: 3.8 grams</span>')
-                .replace(/IP67 Dust and Water Resistance/, '<span class="highlight highlight-added">IP67 Dust and Water Resistance</span>')
-                .replace(/5-point calibration required/, '<span class="highlight highlight-added">5-point calibration required</span>')
-                .replace(/5.0 QUALITY ASSURANCE/, '<span class="highlight highlight-added">5.0 QUALITY ASSURANCE</span>');
-            
-            doc2ContentElement.innerHTML = highlightedContent;
-        }
-
-        // Generate Report Function
-        document.getElementById('generate-report-btn').addEventListener('click', function() {
-            if (!doc1Info.title || !doc2Info.title) {
-                alert('Please compare documents first before generating a report');
-                return;
-            }
-
-            generateComprehensiveReport();
-        });
-
-        function generateComprehensiveReport() {
-            const reportSection = document.getElementById('report-section');
-            const reportMeta = document.getElementById('report-meta');
-            const reportContent = document.getElementById('report-content');
-            
-            // Update report metadata
-            const now = new Date();
-            reportMeta.textContent = `Generated on ${now.toLocaleDateString()} at ${now.toLocaleTimeString()}`;
-            
-            // Generate report content
-            const changeItems = document.querySelectorAll('#changes-container .change-item');
-            const totalChanges = changeItems.length;
-            
-            const reportHTML = `
-                <div class="report-summary">
-                    <h3>Executive Summary</h3>
-                    <p>This comprehensive analysis compares <strong>${doc1Info.title}</strong> (Previous Revision) with <strong>${doc2Info.title}</strong> (Content Revision). The comparison revealed <strong>${totalChanges} significant changes</strong> between the two document versions.</p>
+            async extractTextFromFile(file) {
+                return new Promise(async (resolve, reject) => {
+                    const fileType = file.name.split('.').pop().toLowerCase();
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
-                        <div class="stat-box">
-                            <div class="stat-number">${totalChanges}</div>
-                            <div>Total Changes Detected</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-number">${Math.round((totalChanges / 15) * 100)}%</div>
-                            <div>Document Modification Rate</div>
-                        </div>
-                    </div>
-                </div>
+                    try {
+                        if (fileType === 'pdf') {
+                            await this.showProgress(1, 30, 'Loading PDF...');
+                            const pdfText = await this.extractTextFromPDF(file);
+                            await this.showProgress(1, 100, 'PDF extracted successfully');
+                            resolve(pdfText);
+                        } else if (fileType === 'doc' || fileType === 'docx') {
+                            await this.showProgress(1, 30, 'Processing Word document...');
+                            const docText = await this.extractTextFromWord(file);
+                            await this.showProgress(1, 100, 'Word document processed');
+                            resolve(docText);
+                        } else if (fileType === 'txt') {
+                            await this.showProgress(1, 30, 'Reading text file...');
+                            const text = await this.readTextFile(file);
+                            await this.showProgress(1, 100, 'Text file read successfully');
+                            resolve(text);
+                        } else {
+                            reject(new Error(`Unsupported file type: ${fileType}`));
+                        }
+                    } catch (error) {
+                        reject(error);
+                    }
+                });
+            }
 
-                <h3>Document Information</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
-                    <div class="change-analysis">
-                        <h4>Previous Revision</h4>
-                        <p><strong>Title:</strong> ${doc1Info.title}</p>
-                        <p><strong>Type:</strong> ${doc1Info.type.toUpperCase()}</p>
-                        <p><strong>Size:</strong> ${doc1Info.size} KB</p>
-                        <p><strong>Notes:</strong> ${doc1Info.notes || 'No additional notes provided'}</p>
-                    </div>
-                    <div class="change-analysis">
-                        <h4>Content Revision</h4>
-                        <p><strong>Title:</strong> ${doc2Info.title}</p>
-                        <p><strong>Type:</strong> ${doc2Info.type.toUpperCase()}</p>
-                        <p><strong>Size:</strong> ${doc2Info.size} KB</p>
-                        <p><strong>Notes:</strong> ${doc2Info.notes || 'No additional notes provided'}</p>
-                    </div>
-                </div>
-
-                <h3>Detailed Change Analysis</h3>
-                ${Array.from(changeItems).map((item, index) => `
-                    <div class="change-analysis">
-                        <h5>Change ${index + 1}: ${item.className.includes('change-added') ? 'Addition' : 'Modification'}</h5>
-                        <p>${item.textContent.replace('Added:', '').replace('Removed:', '').trim()}</p>
-                        <div class="impact-assessment">
-                            <strong>Impact Analysis:</strong> ${getImpactAnalysis(item.textContent)}
-                        </div>
-                    </div>
-                `).join('')}
-
-                <h3>Technical Impact Assessment</h3>
-                <div class="change-analysis">
-                    <h4>Overall Document Evolution</h4>
-                    <p>The comparison indicates a significant evolution from revision 1.0 to 2.0, with improvements across multiple technical domains including performance specifications, mechanical design, and quality assurance processes.</p>
+            async extractTextFromPDF(file) {
+                return new Promise((resolve, reject) => {
+                    const fileReader = new FileReader();
                     
-                    <h4>Key
+                    fileReader.onload = async function() {
+                        try {
+                            const typedarray = new Uint8Array(this.result);
+                            const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                            let fullText = '';
+                            
+                            for (let i = 1; i <= pdf.numPages; i++) {
+                                const page = await pdf.getPage(i);
+                                const textContent = await page.getTextContent();
+                                const pageText = textContent.items.map(item => item.str).join(' ');
+                                fullText += pageText + '\n\n';
+                            }
+                            
+                            resolve(fullText);
+                        } catch (error) {
+                            reject(error);
+                        }
+                    };
+                    
+                    fileReader.onerror = reject;
+                    fileReader.readAsArrayBuffer(file);
+                });
+            }
+
+            async extractTextFromWord(file) {
+                return new Promise((resolve, reject) => {
+                    const fileReader = new FileReader();
+                    
+                    fileReader.onload = async function() {
+                        try {
+                            const arrayBuffer = this.result;
+                            const result = await mammoth.extractRawText({ arrayBuffer });
+                            resolve(result.value);
+                        } catch (error) {
+                            reject(error);
+                        }
+                    };
+                    
+                    fileReader.onerror = reject;
+                    fileReader.readAsArrayBuffer(file);
+                });
+            }
+
+            readTextFile(file) {
+                return new Promise((resolve, reject) => {
+                    const fileReader = new FileReader();
+                    
+                    fileReader.onload = function() {
+                        resolve(this.result);
+                    };
+                    
+                    fileReader.onerror = reject;
+                    fileReader.readAsText(file);
+                });
+            }
+
+            updateDocumentInfo(docNumber, file, content) {
+                const doc = docNumber === 1 ? this.doc1 : this.doc2;
+                doc.content = content;
+                doc.fileName = file.name;
+                doc.fileSize = (file.size / 1024).toFixed(2);
+                doc.fileType = file.type || 'Unknown';
+                
+                this.updateUI(docNumber, file);
+            }
+
+            updateUI(docNumber, file) {
+                const card = document.getElementById(`doc${docNumber}-card`);
+                const name = document.getElementById(`doc${docNumber}-name`);
+                const meta = document.getElementById(`doc${docNumber}-meta`);
+                const status = document.getElementById(`doc${docNumber}-status`);
+                const header = document.getElementById(`doc${docNumber}-viewer-header`);
+                const content = document.getElementById(`doc${docNumber}-content`);
+                
+                card.classList.add('ready');
+                name.textContent = file.name;
+                meta.innerHTML = `Size: ${(file.size / 1024).toFixed(2)} KB | Type: ${file.type || 'Unknown'}<br>Uploaded: ${new Date().toLocaleTimeString()}`;
+                status.textContent = 'Ready for comparison';
+                status.className = 'status ready';
+                
+                header.textContent = file.name;
+                content.textContent = this.truncateContent(docNumber === 1 ? this.doc1.content : this.doc2.content);
+            }
+
+            truncateContent(content, maxLength = 10000) {
+                if (content.length > maxLength) {
+                    return content.substring(0, maxLength) + '\n\n... [Content truncated for display] ...';
+                }
+                return content;
+            }
+
+            showProgress(docNumber, percent, text) {
+                const progress = document.getElementById(`doc${docNumber}-progress`);
+                const progressFill = document.getElementById(`doc${docNumber}-progress-fill`);
+                const progressText = document.getElementById(`doc${docNumber}-progress-text`);
+                
+                progress.classList.remove('hidden');
+                progressFill.style.width = `${percent}%`;
+                progressText.textContent = text;
+            }
+
+            hideProgress(docNumber) {
+                const progress = document.getElementById(`doc${docNumber}-progress`);
+                progress.classList.add('hidden');
+            }
+
+            checkReadyForComparison() {
+                if (this.doc1.content && this.doc2.content) {
+                    this.showComparisonSection();
+                    this.analyzeChanges();
+                }
+            }
+
+            showComparisonSection() {
+                document.getElementById('comparison-section').classList.remove('hidden');
+                document.getElementById('changes-section').classList.remove('hidden');
+                this.setupSyncScrolling(true);
+            }
+
+            analyzeChanges() {
+                if (!this.doc1.content || !this.doc2.content) return;
+
+                this.changes = this.findDifferences(this.doc1.content, this.doc2.content);
+                this.displayChanges();
+                this.highlightDifferences();
+            }
+
+            findDifferences(text1, text2) {
+                const changes = [];
+                const diff = Diff.diffLines(text1, text2);
+                
+                diff.forEach(part => {
+                    if (part.added) {
+                        changes.push({
+                            type: 'added',
+                            text: part.value,
+                            description: `Added ${part.count} line(s)`
+                        });
+                    } else if (part.removed) {
+                        changes.push({
+                            type: 'removed', 
+                            text: part.value,
+                            description: `Removed ${part.count} line(s)`
+                        });
+                    }
+                });
+
+                return changes;
+            }
+
+            displayChanges() {
+                const container = document.getElementById('changes-container');
+                container.innerHTML = '';
+
+                if (this.changes.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No significant changes detected between documents</div>';
+                    return;
+                }
+
+                this.changes.forEach(change => {
+                    const changeElement = document.createElement('div');
+                    changeElement.className = `change-item ${change.type === 'added' ? 'change-added' : 'change-removed'}`;
+                    changeElement.innerHTML = `
+                        <strong>${change.type === 'added' ? 'ADDED' : 'REMOVED'}:</strong> ${change.description}
+                        <div class="file-info">${this.truncateText(change.text, 200)}</div>
+                    `;
+                    container.appendChild(changeElement);
+                });
+            }
+
+            highlightDifferences() {
+                const diff = Diff.diffLines(this.doc1.content, this.doc2.content);
+                let doc1HTML = '';
+                let doc2HTML = '';
+
+                diff.forEach(part => {
+                    const escapedText = this.escapeHtml(part.value);
+                    if (part.added) {
+                        doc2HTML += `<span class="highlight-added">${escapedText}</span>`;
+                    } else if (part.removed) {
+                        doc1HTML += `<span class="highlight-removed">${escapedText}</span>`;
+                    } else {
+                        doc1HTML += escapedText;
+                        doc2HTML += escapedText;
+                    }
+                });
+
+                document.getElementById('doc1-content').innerHTML = doc1HTML;
+                document.getElementById('doc2-content').innerHTML = doc2HTML;
+            }
+
+            setupSyncScrolling(enabled) {
+                const doc1Content = document.getElementById('doc1-content');
+                const doc2Content = document.getElementById('doc2-content');
+                
+                // Remove existing listeners
+                doc1Content.onscroll = null;
+                doc2Content.onscroll = null;
+
+                if (enabled) {
+                    let isScrolling = false;
+                    
+                    doc1Content.onscroll = () => {
+                        if (!isScrolling) {
+                            isScrolling = true;
+                            const percent = doc1Content.scrollTop / (doc1Content.scrollHeight - doc1Content.clientHeight);
+                            doc2Content.scrollTop = percent * (doc2Content.scrollHeight - doc2Content.clientHeight);
+                            setTimeout(() => { isScrolling = false; }, 100);
+                        }
+                    };
+                    
+                    doc2Content.onscroll = () => {
+                        if (!isScrolling) {
+                            isScrolling = true;
+                            const percent = doc2Content.scrollTop / (doc2Content.scrollHeight - doc2Content.clientHeight);
+                            doc1Content.scrollTop = percent * (doc1Content.scrollHeight - doc1Content.clientHeight);
+                            setTimeout(() => { isScrolling = false; }, 100);
+                        }
+                    };
+                }
+            }
+
+            addManualChange() {
+                const changeText = prompt('Describe the change you observed:');
+                if (changeText) {
+                    this.changes.push({
+                        type: 'manual',
+                        text: changeText,
+                        description: `Manual entry: ${changeText}`
+                    });
+                    this.displayChanges();
+                }
+            }
+
+            generateReport() {
+                const reportContent = document.getElementById('report-content');
+                const reportSection = document.getElementById('report-section');
+                
+                reportSection.classList.remove('hidden');
+                
+                const reportHTML = this.createReportHTML();
+                reportContent.innerHTML = reportHTML;
+                
+                // Scroll to report
+                reportSection.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            createReportHTML() {
+                const totalChanges = this.changes.length;
+                const addedChanges = this.changes.filter(c => c.type === 'added').length;
+                const removedChanges = this.changes.filter(c => c.type === 'removed').length;
+                const manualChanges = this.changes.filter(c => c.type === 'manual').length;
+
+                return `
+                    <div style="background: white; padding: 30px; border-radius: 8px; margin-bottom: 20px;">
+                        <h3 style="color: #2c3e50; margin-bottom: 20px; border-bottom: 2px solid #3498db; padding-bottom: 10px;">Executive Summary</h3>
+                        <p>This comprehensive analysis compares <strong>${this.doc1.fileName}</strong> with <strong>${this.doc2.fileName}</strong>. The comparison revealed <strong>${totalChanges} significant changes</strong> between the document versions.</p>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0;">
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #3498db;">${totalChanges}</div>
+                                <div>Total Changes</div>
+                            </div>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #27ae60;">${addedChanges}</div>
+                                <div>Additions</div>
+                            </div>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #e74c3c;">${removedChanges}</div>
+                                <div>Removals</div>
+                            </div>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #f39c12;">${manualChanges}</div>
+                                <div>Manual Entries</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: white; padding: 30px; border-radius: 8px; margin-bottom: 20px;">
+                        <h3 style="color: #2c3e50; margin-bottom: 20px;">Document Information</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div>
+                                <h4 style="color: #3498db; margin-bottom: 10px;">Previous Revision</h4>
+                                <p><strong>File Name:</strong> ${this.doc1.fileName}</p>
+                                <p><strong>File Size:</strong> ${this.doc1.fileSize} KB</p>
+                                <p><strong>File Type:</strong> ${this.doc1.fileType}</p>
+                            </div>
+                            <div>
+                                <h4 style="color: #3498db; margin-bottom: 10px;">Content Revision</h4>
+                                <p><strong>File Name:</strong> ${this.doc2.fileName}</p>
+                                <p><strong>File Size:</strong> ${this.doc2.fileSize} KB</p>
+                                <p><strong>File Type:</strong> ${this.doc2.fileType}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: white; padding: 30px; border-radius: 8px;">
+                        <h3 style="color: #2c3e50; margin-bottom: 20px;">Detailed Change Analysis</h3>
+                        ${this.changes.map((change, index) => `
+                            <div style="background: ${change.type === 'added' ? '#e8f8f5' : change.type === 'removed' ? '#fdedec' : '#fff9e6'}; 
+                                        padding: 15px; margin-bottom: 10px; border-radius: 6px; border-left: 4px solid ${
+                                            change.type === 'added' ? '#27ae60' : change.type === 'removed' ? '#e74c3c' : '#f39c12'
+                                        };">
+                                <h5 style="margin: 0 0 8px 0; color: #2c3e50;">Change ${index + 1}: ${change.type.toUpperCase()}</h5>
+                                <p style="margin: 0; color: #7f8c8d;">${change.description}</p>
+                                ${change.text ? `<div style="margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.05); border-radius: 4px; font-family: monospace; font-size: 12px;">${this.escapeHtml(change.text)}</div>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div style="background: #e8f4f8; padding: 25px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #3498db;">
+                        <h4 style="color: #2c3e50; margin-bottom: 15px;">Analysis Conclusion</h4>
+                        <p>The document comparison reveals a ${totalChanges > 10 ? 'significant' : 'moderate'} level of changes between revisions. 
+                        ${addedChanges > removedChanges ? 'The net effect is document expansion with new content additions.' : 
+                          removedChanges > addedChanges ? 'The net effect is document consolidation with content removals.' : 
+                          'The changes represent a balanced modification of content.'}</p>
+                        <p><strong>Report Generated:</strong> ${new Date().toLocaleString()}</p>
+                    </div>
+                `;
+            }
+
+            truncateText(text, maxLength) {
+                if (text.length <= maxLength) return text;
+                return text.substring(0, maxLength) + '...';
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            new DocDiffDetective();
+        });
+    </script>
+</body>
+</html>
