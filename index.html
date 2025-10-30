@@ -27,18 +27,18 @@
             background-color: var(--light-gray);
             color: var(--text-color);
             line-height: 1.6;
+            padding: 20px;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
         }
         
         header {
             background-color: var(--primary-color);
             color: white;
-            padding: 20px 0;
+            padding: 20px;
             border-radius: var(--border-radius) var(--border-radius) 0 0;
             margin-bottom: 20px;
         }
@@ -236,6 +236,34 @@
             background-color: rgba(231, 76, 60, 0.3);
             text-decoration: line-through;
         }
+        
+        .empty-state {
+            color: var(--dark-gray);
+            font-style: italic;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .file-upload-area {
+            border: 2px dashed var(--medium-gray);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            text-align: center;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload-area:hover {
+            border-color: var(--secondary-color);
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            color: var(--dark-gray);
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -318,6 +346,10 @@
                         
                         <h4>4.0 Calibration Procedure</h4>
                         <p>Each unit must undergo a 3-point calibration at temperatures of -20°C, 25°C, and 70°C. Calibration data is stored in non-volatile memory.</p>
+                        
+                        <p>Additional notes: The initial design has been tested in laboratory conditions and meets all baseline requirements. Further field testing is scheduled for Q4 2023.</p>
+                        
+                        <p>Approval for this revision has been granted by the engineering review board pending completion of environmental stress tests.</p>
                     </div>
                 </div>
             </div>
@@ -359,6 +391,8 @@
                         
                         <h4><span class="highlight highlight-added">5.0 Quality Assurance</span></h4>
                         <p><span class="highlight highlight-added">All units must pass a 48-hour burn-in test at 85°C before shipment. Failure rate must not exceed 0.1%.</span></p>
+                        
+                        <p><span class="highlight highlight-added">Field testing completed successfully with all metrics exceeding expectations. The design has been approved for mass production.</span></p>
                     </div>
                 </div>
             </div>
@@ -398,6 +432,9 @@
                 </div>
                 <div class="change-item change-added">
                     <strong>New section added:</strong> Quality Assurance section with burn-in requirements
+                </div>
+                <div class="change-item change-added">
+                    <strong>Field testing completed:</strong> Added note about successful field testing and mass production approval
                 </div>
             </div>
             
@@ -447,15 +484,22 @@
             
             // Button functionality
             document.getElementById('add-change-btn').addEventListener('click', function() {
-                alert('Add Change feature would open a dialog to manually document changes.');
+                const changeText = prompt('Enter the change you observed:');
+                if (changeText) {
+                    const changesContainer = document.getElementById('changes-container');
+                    const newChange = document.createElement('div');
+                    newChange.className = 'change-item change-added';
+                    newChange.innerHTML = `<strong>Manual entry:</strong> ${changeText}`;
+                    changesContainer.appendChild(newChange);
+                }
             });
             
             document.getElementById('auto-detect-btn').addEventListener('click', function() {
-                alert('Auto-detect would analyze the documents and highlight differences automatically.');
+                alert('Auto-detect would analyze the documents and highlight differences automatically. This feature would require backend processing in a real application.');
             });
             
             document.getElementById('generate-report-btn').addEventListener('click', function() {
-                alert('Report generation would create a professional PDF change report.');
+                alert('Report generation would create a professional PDF change report with all detected differences.');
             });
         });
     </script>
