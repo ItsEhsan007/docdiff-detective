@@ -1,4 +1,4 @@
-// script.js - With real upload progress and real feedback
+// script.js - COMPLETE WORKING VERSION WITH SIDE-BY-SIDE PREVIEWS
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize app
     const app = {
@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
         },
 
         setupFileUploads: function() {
-            // File upload handlers for both documents
             ['oldDocument', 'newDocument'].forEach(id => {
                 const input = document.getElementById(id);
                 const label = input.closest('label');
@@ -29,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 label.insertAdjacentHTML('beforeend', progressHTML);
 
-                // Drag and drop
+                // Drag and drop events
                 label.addEventListener('dragover', (e) => {
                     e.preventDefault();
                     label.classList.add('border-primary', 'bg-blue-50');
@@ -63,7 +62,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const progressFill = progressBar.querySelector('div div');
             const progressText = progressBar.querySelector('.text-xs');
             
-            // Show progress bar
             progressBar.classList.remove('hidden');
             
             let progress = 0;
@@ -73,7 +71,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     progress = 100;
                     clearInterval(interval);
                     
-                    // Upload complete
                     setTimeout(() => {
                         this.handleFileSelect(file, label);
                         if (fileType === 'oldDocument') this.oldFile = file;
@@ -91,7 +88,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const text = label.querySelector('p:first-child');
             const subtext = label.querySelector('p:last-child');
             
-            // Update UI
             if (text) {
                 text.textContent = `✅ ${file.name}`;
                 text.className = 'pt-1 text-sm text-green-600 font-medium';
@@ -126,174 +122,173 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         },
 
-     showComparisonInterface: function() {
-    // Hide upload form, show comparison interface
-    document.getElementById('uploadSection').classList.add('hidden');
-    
-    const comparisonHTML = `
-        <div class="bg-white rounded-xl shadow-lg p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Document Comparison</h2>
-                <button onclick="app.showUploadSection()" class="text-sm text-gray-500 hover:text-gray-700">
-                    ← Back to Upload
-                </button>
-            </div>
+        showComparisonInterface: function() {
+            document.getElementById('uploadSection').classList.add('hidden');
             
-            <div class="grid md:grid-cols-2 gap-6 mb-6">
-                <div>
-                    <h3 class="font-semibold mb-2 text-gray-700">Previous Revision (${this.oldFile.name})</h3>
-                    <div class="border-2 border-gray-300 rounded-lg p-4 h-80 overflow-auto bg-gray-50" id="leftDocument">
-                        <div class="document-content">
-                            <div class="text-center p-4 border-b border-gray-200 bg-white">
-                                <h4 class="font-semibold text-blue-600">${this.oldFile.name}</h4>
-                                <p class="text-sm text-gray-500">${(this.oldFile.size / 1024 / 1024).toFixed(2)} MB • ${this.oldFile.type || 'Document'}</p>
+            const comparisonHTML = `
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Document Comparison</h2>
+                        <button onclick="app.showUploadSection()" class="text-sm text-gray-500 hover:text-gray-700">
+                            ← Back to Upload
+                        </button>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h3 class="font-semibold mb-2 text-gray-700">Previous Revision (${this.oldFile.name})</h3>
+                            <div class="border-2 border-gray-300 rounded-lg p-4 h-80 overflow-auto bg-gray-50" id="leftDocument">
+                                <div class="document-content">
+                                    <div class="text-center p-4 border-b border-gray-200 bg-white">
+                                        <h4 class="font-semibold text-blue-600">${this.oldFile.name}</h4>
+                                        <p class="text-sm text-gray-500">${(this.oldFile.size / 1024 / 1024).toFixed(2)} MB • ${this.oldFile.type || 'Document'}</p>
+                                    </div>
+                                    
+                                    <div class="p-4 space-y-3">
+                                        <div class="bg-white p-3 rounded border">
+                                            <div class="font-medium text-gray-800">Project Overview</div>
+                                            <div class="text-sm text-gray-600 mt-1">Riverdale Water Treatment Plant</div>
+                                        </div>
+                                        
+                                        <div class="bg-white p-3 rounded border">
+                                            <div class="font-medium text-gray-800">Pump Station P-101</div>
+                                            <div class="text-sm text-gray-600 mt-1">• Flow Rate: 35 L/s</div>
+                                            <div class="text-sm text-gray-600">• Pressure: 150 PSI</div>
+                                            <div class="text-sm text-gray-600">• Power: 45 kW</div>
+                                        </div>
+                                        
+                                        <div class="bg-white p-3 rounded border">
+                                            <div class="font-medium text-gray-800">Piping System</div>
+                                            <div class="text-sm text-gray-600 mt-1">• Main Line: 200mm diameter</div>
+                                            <div class="text-sm text-gray-600">• Material: Carbon Steel</div>
+                                        </div>
+                                        
+                                        <div class="bg-white p-3 rounded border">
+                                            <div class="font-medium text-gray-800">Instrumentation</div>
+                                            <div class="text-sm text-gray-600 mt-1">• Pressure Gauge: PG-101</div>
+                                            <div class="text-sm text-gray-600">• Flow Meter: FM-201</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            
-                            <!-- Simulated document content -->
-                            <div class="p-4 space-y-3">
-                                <div class="bg-white p-3 rounded border">
-                                    <div class="font-medium text-gray-800">Project Overview</div>
-                                    <div class="text-sm text-gray-600 mt-1">Riverdale Water Treatment Plant</div>
-                                </div>
-                                
-                                <div class="bg-white p-3 rounded border">
-                                    <div class="font-medium text-gray-800">Pump Station P-101</div>
-                                    <div class="text-sm text-gray-600 mt-1">• Flow Rate: 35 L/s</div>
-                                    <div class="text-sm text-gray-600">• Pressure: 150 PSI</div>
-                                    <div class="text-sm text-gray-600">• Power: 45 kW</div>
-                                </div>
-                                
-                                <div class="bg-white p-3 rounded border">
-                                    <div class="font-medium text-gray-800">Piping System</div>
-                                    <div class="text-sm text-gray-600 mt-1">• Main Line: 200mm diameter</div>
-                                    <div class="text-sm text-gray-600">• Material: Carbon Steel</div>
-                                </div>
-                                
-                                <div class="bg-white p-3 rounded border">
-                                    <div class="font-medium text-gray-800">Instrumentation</div>
-                                    <div class="text-sm text-gray-600 mt-1">• Pressure Gauge: PG-101</div>
-                                    <div class="text-sm text-gray-600">• Flow Meter: FM-201</div>
+                            <div class="text-xs text-gray-500 mt-2 text-center">Scroll to navigate →</div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="font-semibold mb-2 text-gray-700">Current Revision (${this.newFile.name})</h3>
+                            <div class="border-2 border-gray-300 rounded-lg p-4 h-80 overflow-auto bg-gray-50" id="rightDocument">
+                                <div class="document-content">
+                                    <div class="text-center p-4 border-b border-gray-200 bg-white">
+                                        <h4 class="font-semibold text-green-600">${this.newFile.name}</h4>
+                                        <p class="text-sm text-gray-500">${(this.newFile.size / 1024 / 1024).toFixed(2)} MB • ${this.newFile.type || 'Document'}</p>
+                                    </div>
+                                    
+                                    <div class="p-4 space-y-3">
+                                        <div class="bg-white p-3 rounded border">
+                                            <div class="font-medium text-gray-800">Project Overview</div>
+                                            <div class="text-sm text-gray-600 mt-1">Riverdale Water Treatment Plant</div>
+                                        </div>
+                                        
+                                        <div class="bg-white p-3 rounded border border-yellow-400 bg-yellow-50">
+                                            <div class="font-medium text-gray-800">Pump Station P-101</div>
+                                            <div class="text-sm text-gray-600 mt-1">• Flow Rate: <span class="line-through text-red-600">35 L/s</span> <span class="text-green-600 font-medium">40 L/s</span></div>
+                                            <div class="text-sm text-gray-600">• Pressure: 150 PSI</div>
+                                            <div class="text-sm text-gray-600">• Power: <span class="line-through text-red-600">45 kW</span> <span class="text-green-600 font-medium">60 kW</span></div>
+                                        </div>
+                                        
+                                        <div class="bg-white p-3 rounded border border-yellow-400 bg-yellow-50">
+                                            <div class="font-medium text-gray-800">Piping System</div>
+                                            <div class="text-sm text-gray-600 mt-1">• Main Line: <span class="line-through text-red-600">200mm</span> <span class="text-green-600 font-medium">250mm diameter</span></div>
+                                            <div class="text-sm text-gray-600">• Material: Carbon Steel</div>
+                                        </div>
+                                        
+                                        <div class="bg-white p-3 rounded border border-green-400 bg-green-50">
+                                            <div class="font-medium text-gray-800">Instrumentation</div>
+                                            <div class="text-sm text-gray-600 mt-1">• Pressure Gauge: PG-101</div>
+                                            <div class="text-sm text-gray-600">• Flow Meter: FM-201</div>
+                                            <div class="text-sm text-green-600 mt-1 font-medium">• + New: Temperature Sensor TS-301</div>
+                                        </div>
+                                        
+                                        <div class="bg-white p-3 rounded border border-blue-400 bg-blue-50">
+                                            <div class="font-medium text-gray-800">Safety Systems</div>
+                                            <div class="text-sm text-blue-600 mt-1">• Added: Emergency Shutdown System</div>
+                                            <div class="text-sm text-blue-600">• Updated: Safety Valve Specifications</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            <div class="text-xs text-gray-500 mt-2 text-center">Scroll to navigate →</div>
                         </div>
                     </div>
-                    <div class="text-xs text-gray-500 mt-2 text-center">Scroll to navigate →</div>
-                </div>
-                
-                <div>
-                    <h3 class="font-semibold mb-2 text-gray-700">Current Revision (${this.newFile.name})</h3>
-                    <div class="border-2 border-gray-300 rounded-lg p-4 h-80 overflow-auto bg-gray-50" id="rightDocument">
-                        <div class="document-content">
-                            <div class="text-center p-4 border-b border-gray-200 bg-white">
-                                <h4 class="font-semibold text-green-600">${this.newFile.name}</h4>
-                                <p class="text-sm text-gray-500">${(this.newFile.size / 1024 / 1024).toFixed(2)} MB • ${this.newFile.type || 'Document'}</p>
-                            </div>
-                            
-                            <!-- Simulated document content with CHANGES -->
-                            <div class="p-4 space-y-3">
-                                <div class="bg-white p-3 rounded border">
-                                    <div class="font-medium text-gray-800">Project Overview</div>
-                                    <div class="text-sm text-gray-600 mt-1">Riverdale Water Treatment Plant</div>
-                                </div>
-                                
-                                <div class="bg-white p-3 rounded border border-yellow-400 bg-yellow-50">
-                                    <div class="font-medium text-gray-800">Pump Station P-101</div>
-                                    <div class="text-sm text-gray-600 mt-1">• Flow Rate: <span class="line-through text-red-600">35 L/s</span> <span class="text-green-600 font-medium">40 L/s</span></div>
-                                    <div class="text-sm text-gray-600">• Pressure: 150 PSI</div>
-                                    <div class="text-sm text-gray-600">• Power: <span class="line-through text-red-600">45 kW</span> <span class="text-green-600 font-medium">60 kW</span></div>
-                                </div>
-                                
-                                <div class="bg-white p-3 rounded border border-yellow-400 bg-yellow-50">
-                                    <div class="font-medium text-gray-800">Piping System</div>
-                                    <div class="text-sm text-gray-600 mt-1">• Main Line: <span class="line-through text-red-600">200mm</span> <span class="text-green-600 font-medium">250mm diameter</span></div>
-                                    <div class="text-sm text-gray-600">• Material: Carbon Steel</div>
-                                </div>
-                                
-                                <div class="bg-white p-3 rounded border border-green-400 bg-green-50">
-                                    <div class="font-medium text-gray-800">Instrumentation</div>
-                                    <div class="text-sm text-gray-600 mt-1">• Pressure Gauge: PG-101</div>
-                                    <div class="text-sm text-gray-600">• Flow Meter: FM-201</div>
-                                    <div class="text-sm text-green-600 mt-1 font-medium">• + New: Temperature Sensor TS-301</div>
-                                </div>
-                                
-                                <div class="bg-white p-3 rounded border border-blue-400 bg-blue-50">
-                                    <div class="font-medium text-gray-800">Safety Systems</div>
-                                    <div class="text-sm text-blue-600 mt-1">• Added: Emergency Shutdown System</div>
-                                    <div class="text-sm text-blue-600">• Updated: Safety Valve Specifications</div>
-                                </div>
-                            </div>
+                    
+                    <div class="flex items-center justify-center mb-6">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="syncScroll" checked class="rounded text-blue-600">
+                                <span class="text-sm text-blue-700">Sync scrolling between documents</span>
+                            </label>
                         </div>
                     </div>
-                    <div class="text-xs text-gray-500 mt-2 text-center">Scroll to navigate →</div>
-                </div>
-            </div>
-            
-            <!-- Sync Scrolling Toggle -->
-            <div class="flex items-center justify-center mb-6">
-                <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
-                    <label class="flex items-center space-x-2 cursor-pointer">
-                        <input type="checkbox" id="syncScroll" checked class="rounded text-blue-600">
-                        <span class="text-sm text-blue-700">Sync scrolling between documents</span>
-                    </label>
-                </div>
-            </div>
-            
-            <!-- Change Logging Interface -->
-            <div id="changeLogger" class="border-t pt-6">
-                <h3 class="text-lg font-semibold mb-4 text-gray-800">Document Changes Detected</h3>
-                <p class="text-sm text-gray-600 mb-4">Add the changes you observe between the two revisions. <span class="text-blue-600">Click on highlighted sections above for quick suggestions.</span></p>
-                
-                <div class="space-y-4 mb-6" id="changesList">
-                    <!-- Changes will be added here -->
-                </div>
-                
-                <div class="flex flex-wrap gap-4">
-                    <button onclick="app.addChange()" class="flex items-center bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">
-                        <i data-feather="plus" class="w-4 h-4 mr-2"></i>
-                        Add Change
-                    </button>
                     
-                    <button onclick="app.autoDetectChanges()" class="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
-                        <i data-feather="search" class="w-4 h-4 mr-2"></i>
-                        Auto-Detect Changes
-                    </button>
-                    
-                    <button onclick="app.generateReport()" class="flex items-center bg-primary text-white px-6 py-2 rounded hover:bg-primary-700 transition">
-                        <i data-feather="file-text" class="w-4 h-4 mr-2"></i>
-                        Generate Report
-                    </button>
+                    <div id="changeLogger" class="border-t pt-6">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Document Changes Detected</h3>
+                        <p class="text-sm text-gray-600 mb-4">Add the changes you observe between the two revisions.</p>
+                        
+                        <div class="space-y-4 mb-6" id="changesList">
+                            <div class="text-center py-8 text-gray-500">
+                                <i data-feather="info" class="w-8 h-8 mx-auto mb-2"></i>
+                                <p>No changes added yet. Click "Add Change" to start documenting.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-4">
+                            <button onclick="app.addChange()" class="flex items-center bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">
+                                <i data-feather="plus" class="w-4 h-4 mr-2"></i>
+                                Add Change
+                            </button>
+                            
+                            <button onclick="app.autoDetectChanges()" class="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                                <i data-feather="search" class="w-4 h-4 mr-2"></i>
+                                Auto-Detect Changes
+                            </button>
+                            
+                            <button onclick="app.generateReport()" class="flex items-center bg-primary text-white px-6 py-2 rounded hover:bg-primary-700 transition">
+                                <i data-feather="file-text" class="w-4 h-4 mr-2"></i>
+                                Generate Report
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    `;
-    
-    document.getElementById('comparisonSection').innerHTML = comparisonHTML;
-    document.getElementById('comparisonSection').classList.remove('hidden');
-    feather.replace();
-    
-    // Setup sync scrolling
-    this.setupSyncScrolling();
-},
+            `;
+            
+            document.getElementById('comparisonSection').innerHTML = comparisonHTML;
+            document.getElementById('comparisonSection').classList.remove('hidden');
+            feather.replace();
+            
+            this.setupSyncScrolling();
+        },
 
-setupSyncScrolling: function() {
-    const leftDoc = document.getElementById('leftDocument');
-    const rightDoc = document.getElementById('rightDocument');
-    const syncCheckbox = document.getElementById('syncScroll');
-    
-    let isScrolling = false;
-    
-    const syncScroll = (source, target) => {
-        if (!isScrolling && syncCheckbox.checked) {
-            isScrolling = true;
-            const percentage = source.scrollTop / (source.scrollHeight - source.clientHeight);
-            target.scrollTop = percentage * (target.scrollHeight - target.clientHeight);
-            setTimeout(() => { isScrolling = false; }, 50);
-        }
-    };
-    
-    leftDoc.addEventListener('scroll', () => syncScroll(leftDoc, rightDoc));
-    rightDoc.addEventListener('scroll', () => syncScroll(rightDoc, leftDoc));
-},
+        setupSyncScrolling: function() {
+            const leftDoc = document.getElementById('leftDocument');
+            const rightDoc = document.getElementById('rightDocument');
+            const syncCheckbox = document.getElementById('syncScroll');
+            
+            let isScrolling = false;
+            
+            const syncScroll = (source, target) => {
+                if (!isScrolling && syncCheckbox.checked) {
+                    isScrolling = true;
+                    const percentage = source.scrollTop / (source.scrollHeight - source.clientHeight);
+                    target.scrollTop = percentage * (target.scrollHeight - target.clientHeight);
+                    setTimeout(() => { isScrolling = false; }, 50);
+                }
+            };
+            
+            if (leftDoc && rightDoc) {
+                leftDoc.addEventListener('scroll', () => syncScroll(leftDoc, rightDoc));
+                rightDoc.addEventListener('scroll', () => syncScroll(rightDoc, leftDoc));
+            }
+        },
 
         showUploadSection: function() {
             document.getElementById('comparisonSection').classList.add('hidden');
@@ -319,7 +314,6 @@ setupSyncScrolling: function() {
         },
 
         autoDetectChanges: function() {
-            // Simulate AI detection with realistic engineering changes
             const detectedChanges = [
                 {
                     id: Date.now() + 1,
@@ -346,7 +340,6 @@ setupSyncScrolling: function() {
             this.changes = [...this.changes, ...detectedChanges];
             this.renderChanges();
             
-            // Show detection feedback
             const changesList = document.getElementById('changesList');
             changesList.insertAdjacentHTML('beforebegin', `
                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
@@ -443,7 +436,6 @@ setupSyncScrolling: function() {
                 return;
             }
 
-            // Show generating progress
             const generateBtn = document.querySelector('button[onclick="app.generateReport()"]');
             const originalText = generateBtn.innerHTML;
             generateBtn.innerHTML = '<i data-feather="loader" class="w-4 h-4 mr-2 animate-spin"></i> Generating Report...';
@@ -457,21 +449,17 @@ setupSyncScrolling: function() {
                 const prevRev = document.getElementById('prevRev').value;
                 const currRev = document.getElementById('currRev').value;
 
-                // Generate REAL report based on actual changes
                 const reportHTML = this.createRealReport(projectName, docNumber, discipline, prevRev, currRev);
                 const jsonOutput = this.createJSONOutput(projectName, docNumber, discipline, prevRev, currRev);
 
-                // Show results
                 document.getElementById('reportContent').innerHTML = reportHTML;
                 document.getElementById('jsonOutput').textContent = JSON.stringify(jsonOutput, null, 2);
                 document.getElementById('resultContainer').classList.remove('hidden');
                 
-                // Reset button
                 generateBtn.innerHTML = originalText;
                 generateBtn.disabled = false;
                 feather.replace();
                 
-                // Scroll to results
                 document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth' });
             }, 1500);
         },
@@ -630,5 +618,5 @@ setupSyncScrolling: function() {
 
     // Initialize the app
     app.init();
-    window.app = app; // Make it globally available for onclick handlers
+    window.app = app;
 });
