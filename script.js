@@ -268,27 +268,33 @@ document.addEventListener('DOMContentLoaded', function() {
             this.setupSyncScrolling();
         },
 
-        setupSyncScrolling: function() {
-            const leftDoc = document.getElementById('leftDocument');
-            const rightDoc = document.getElementById('rightDocument');
-            const syncCheckbox = document.getElementById('syncScroll');
+     setupSyncScrolling: function() {
+    const leftDoc = document.getElementById('leftDocument');
+    const rightDoc = document.getElementById('rightDocument');
+    const syncCheckbox = document.getElementById('syncScroll');
+    
+    let isScrolling = false;
+    
+    const syncScroll = (source, target) => {
+        if (!isScrolling && syncCheckbox.checked) {
+            isScrolling = true;
             
-            let isScrolling = false;
+            // Use percentage-based scrolling
+            const sourceMaxScroll = source.scrollHeight - source.clientHeight;
+            const targetMaxScroll = target.scrollHeight - target.clientHeight;
             
-            const syncScroll = (source, target) => {
-                if (!isScrolling && syncCheckbox.checked) {
-                    isScrolling = true;
-                    const percentage = source.scrollTop / (source.scrollHeight - source.clientHeight);
-                    target.scrollTop = percentage * (target.scrollHeight - target.clientHeight);
-                    setTimeout(() => { isScrolling = false; }, 50);
-                }
-            };
-            
-            if (leftDoc && rightDoc) {
-                leftDoc.addEventListener('scroll', () => syncScroll(leftDoc, rightDoc));
-                rightDoc.addEventListener('scroll', () => syncScroll(rightDoc, leftDoc));
+            if (sourceMaxScroll > 0) {
+                const percentage = source.scrollTop / sourceMaxScroll;
+                target.scrollTop = percentage * targetMaxScroll;
             }
-        },
+            
+            setTimeout(() => { isScrolling = false; }, 50);
+        }
+    };
+    
+    leftDoc.addEventListener('scroll', () => syncScroll(leftDoc, rightDoc));
+    rightDoc.addEventListener('scroll', () => syncScroll(rightDoc, leftDoc));
+},
 
         showUploadSection: function() {
             document.getElementById('comparisonSection').classList.add('hidden');
