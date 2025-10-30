@@ -122,153 +122,132 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         },
 
-       showComparisonInterface: function() {
-    document.getElementById('uploadSection').classList.add('hidden');
-    
-    const comparisonHTML = `
-        <div class="bg-white rounded-xl shadow-lg p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Document Comparison</h2>
-                <button onclick="app.showUploadSection()" class="text-sm text-gray-500 hover:text-gray-700">
-                    ← Back to Upload
-                </button>
-            </div>
+        showComparisonInterface: function() {
+            document.getElementById('uploadSection').classList.add('hidden');
             
-            <div class="grid md:grid-cols-2 gap-6 mb-6">
-                <div>
-                    <h3 class="font-semibold mb-2 text-gray-700">Previous Revision (${this.oldFile.name})</h3>
-                    <div class="border-2 border-gray-300 rounded-lg p-4 h-80 overflow-auto bg-gray-50" id="leftDocument">
-                        <div class="document-content">
-                            <div class="text-center p-4 border-b border-gray-200 bg-white">
-                                <h4 class="font-semibold text-blue-600">${this.oldFile.name}</h4>
-                                <p class="text-sm text-gray-500">${(this.oldFile.size / 1024 / 1024).toFixed(2)} MB • ${this.oldFile.type || 'Document'}</p>
-                            </div>
-                            
-                            <div class="p-4">
-                                <div class="text-center text-gray-500 py-8">
-                                    <i data-feather="file-text" class="w-16 h-16 mx-auto mb-4 text-gray-300"></i>
-                                    <div class="font-medium">Document Preview</div>
-                                    <div class="text-sm mt-2">${this.oldFile.name}</div>
+            const comparisonHTML = `
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Document Comparison</h2>
+                        <button onclick="app.showUploadSection()" class="text-sm text-gray-500 hover:text-gray-700">
+                            ← Back to Upload
+                        </button>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h3 class="font-semibold mb-2 text-gray-700">Previous Revision (${this.oldFile.name})</h3>
+                            <div class="border-2 border-gray-300 rounded-lg p-4 h-80 overflow-auto bg-gray-50" id="leftDocument">
+                                <div class="text-center p-4">
+                                    <div class="font-medium text-lg text-blue-600">${this.oldFile.name}</div>
+                                    <div class="text-sm text-gray-500 mt-2">YOUR UPLOADED FILE</div>
                                     <div class="text-xs text-gray-400 mt-3">
-                                        Uploaded: ${new Date().toLocaleDateString()}<br>
                                         Size: ${(this.oldFile.size / 1024).toFixed(0)} KB<br>
-                                        Pages: Would show actual page count
+                                        Type: ${this.oldFile.type || 'PDF Document'}<br>
+                                        Uploaded: Just now
                                     </div>
                                     <div class="text-xs text-blue-500 mt-4 font-medium">
-                                        This area would display the actual PDF content<br>
-                                        when integrated with a PDF viewer library
+                                        ✅ Ready for comparison
                                     </div>
                                 </div>
                             </div>
+                            <div class="text-xs text-gray-500 mt-2 text-center">Scroll to compare documents</div>
                         </div>
-                    </div>
-                    <div class="text-xs text-gray-500 mt-2 text-center">Scroll to compare documents</div>
-                </div>
-                
-                <div>
-                    <h3 class="font-semibold mb-2 text-gray-700">Current Revision (${this.newFile.name})</h3>
-                    <div class="border-2 border-gray-300 rounded-lg p-4 h-80 overflow-auto bg-gray-50" id="rightDocument">
-                        <div class="document-content">
-                            <div class="text-center p-4 border-b border-gray-200 bg-white">
-                                <h4 class="font-semibold text-green-600">${this.newFile.name}</h4>
-                                <p class="text-sm text-gray-500">${(this.newFile.size / 1024 / 1024).toFixed(2)} MB • ${this.newFile.type || 'Document'}</p>
-                            </div>
-                            
-                            <div class="p-4">
-                                <div class="text-center text-gray-500 py-8">
-                                    <i data-feather="file-text" class="w-16 h-16 mx-auto mb-4 text-gray-300"></i>
-                                    <div class="font-medium">Document Preview</div>
-                                    <div class="text-sm mt-2">${this.newFile.name}</div>
+                        
+                        <div>
+                            <h3 class="font-semibold mb-2 text-gray-700">Current Revision (${this.newFile.name})</h3>
+                            <div class="border-2 border-gray-300 rounded-lg p-4 h-80 overflow-auto bg-gray-50" id="rightDocument">
+                                <div class="text-center p-4">
+                                    <div class="font-medium text-lg text-green-600">${this.newFile.name}</div>
+                                    <div class="text-sm text-gray-500 mt-2">YOUR UPLOADED FILE</div>
                                     <div class="text-xs text-gray-400 mt-3">
-                                        Uploaded: ${new Date().toLocaleDateString()}<br>
                                         Size: ${(this.newFile.size / 1024).toFixed(0)} KB<br>
-                                        Pages: Would show actual page count
+                                        Type: ${this.newFile.type || 'PDF Document'}<br>
+                                        Uploaded: Just now
                                     </div>
                                     <div class="text-xs text-green-500 mt-4 font-medium">
-                                        Compare with left document to identify changes
+                                        ✅ Ready for comparison
                                     </div>
                                 </div>
                             </div>
+                            <div class="text-xs text-gray-500 mt-2 text-center">Scroll to compare documents</div>
                         </div>
                     </div>
-                    <div class="text-xs text-gray-500 mt-2 text-center">Scroll to compare documents</div>
-                </div>
-            </div>
-            
-            <div class="flex items-center justify-center mb-6">
-                <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
-                    <label class="flex items-center space-x-2 cursor-pointer">
-                        <input type="checkbox" id="syncScroll" checked class="rounded text-blue-600">
-                        <span class="text-sm text-blue-700">Sync scrolling between documents</span>
-                    </label>
-                </div>
-            </div>
-            
-            <!-- Rest of your change logging interface remains the same -->
-            <div id="changeLogger" class="border-t pt-6">
-                <h3 class="text-lg font-semibold mb-4 text-gray-800">Document Changes Detected</h3>
-                <p class="text-sm text-gray-600 mb-4">Add the changes you observe between the two revisions.</p>
-                
-                <div class="space-y-4 mb-6" id="changesList">
-                    <div class="text-center py-8 text-gray-500">
-                        <i data-feather="info" class="w-8 h-8 mx-auto mb-2"></i>
-                        <p>No changes added yet. Click "Add Change" to start documenting.</p>
+                    
+                    <div class="flex items-center justify-center mb-6">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="syncScroll" checked class="rounded text-blue-600">
+                                <span class="text-sm text-blue-700">Sync scrolling between documents</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div id="changeLogger" class="border-t pt-6">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Document Changes Detected</h3>
+                        <p class="text-sm text-gray-600 mb-4">Add the changes you observe between the two revisions.</p>
+                        
+                        <div class="space-y-4 mb-6" id="changesList">
+                            <div class="text-center py-8 text-gray-500">
+                                <i data-feather="info" class="w-8 h-8 mx-auto mb-2"></i>
+                                <p>No changes added yet. Click "Add Change" to start documenting.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-4">
+                            <button onclick="app.addChange()" class="flex items-center bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">
+                                <i data-feather="plus" class="w-4 h-4 mr-2"></i>
+                                Add Change
+                            </button>
+                            
+                            <button onclick="app.autoDetectChanges()" class="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                                <i data-feather="search" class="w-4 h-4 mr-2"></i>
+                                Auto-Detect Changes
+                            </button>
+                            
+                            <button onclick="app.generateReport()" class="flex items-center bg-primary text-white px-6 py-2 rounded hover:bg-primary-700 transition">
+                                <i data-feather="file-text" class="w-4 h-4 mr-2"></i>
+                                Generate Report
+                            </button>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="flex flex-wrap gap-4">
-                    <button onclick="app.addChange()" class="flex items-center bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">
-                        <i data-feather="plus" class="w-4 h-4 mr-2"></i>
-                        Add Change
-                    </button>
+            `;
+            
+            document.getElementById('comparisonSection').innerHTML = comparisonHTML;
+            document.getElementById('comparisonSection').classList.remove('hidden');
+            feather.replace();
+            
+            this.setupSyncScrolling();
+        },
+
+        setupSyncScrolling: function() {
+            const leftDoc = document.getElementById('leftDocument');
+            const rightDoc = document.getElementById('rightDocument');
+            const syncCheckbox = document.getElementById('syncScroll');
+            
+            let isScrolling = false;
+            
+            const syncScroll = (source, target) => {
+                if (!isScrolling && syncCheckbox.checked) {
+                    isScrolling = true;
                     
-                    <button onclick="app.autoDetectChanges()" class="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
-                        <i data-feather="search" class="w-4 h-4 mr-2"></i>
-                        Auto-Detect Changes
-                    </button>
+                    // Use percentage-based scrolling
+                    const sourceMaxScroll = source.scrollHeight - source.clientHeight;
+                    const targetMaxScroll = target.scrollHeight - target.clientHeight;
                     
-                    <button onclick="app.generateReport()" class="flex items-center bg-primary text-white px-6 py-2 rounded hover:bg-primary-700 transition">
-                        <i data-feather="file-text" class="w-4 h-4 mr-2"></i>
-                        Generate Report
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    document.getElementById('comparisonSection').innerHTML = comparisonHTML;
-    document.getElementById('comparisonSection').classList.remove('hidden');
-    feather.replace();
-    
-    this.setupSyncScrolling();
-},
-     setupSyncScrolling: function() {
-    const leftDoc = document.getElementById('leftDocument');
-    const rightDoc = document.getElementById('rightDocument');
-    const syncCheckbox = document.getElementById('syncScroll');
-    
-    let isScrolling = false;
-    
-    const syncScroll = (source, target) => {
-        if (!isScrolling && syncCheckbox.checked) {
-            isScrolling = true;
+                    if (sourceMaxScroll > 0) {
+                        const percentage = source.scrollTop / sourceMaxScroll;
+                        target.scrollTop = percentage * targetMaxScroll;
+                    }
+                    
+                    setTimeout(() => { isScrolling = false; }, 50);
+                }
+            };
             
-            // Use percentage-based scrolling
-            const sourceMaxScroll = source.scrollHeight - source.clientHeight;
-            const targetMaxScroll = target.scrollHeight - target.clientHeight;
-            
-            if (sourceMaxScroll > 0) {
-                const percentage = source.scrollTop / sourceMaxScroll;
-                target.scrollTop = percentage * targetMaxScroll;
-            }
-            
-            setTimeout(() => { isScrolling = false; }, 50);
-        }
-    };
-    
-    leftDoc.addEventListener('scroll', () => syncScroll(leftDoc, rightDoc));
-    rightDoc.addEventListener('scroll', () => syncScroll(rightDoc, leftDoc));
-},
+            leftDoc.addEventListener('scroll', () => syncScroll(leftDoc, rightDoc));
+            rightDoc.addEventListener('scroll', () => syncScroll(rightDoc, leftDoc));
+        },
 
         showUploadSection: function() {
             document.getElementById('comparisonSection').classList.add('hidden');
