@@ -27,18 +27,18 @@
             background-color: var(--light-gray);
             color: var(--text-color);
             line-height: 1.6;
-            padding: 20px;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
         }
         
         header {
             background-color: var(--primary-color);
             color: white;
-            padding: 20px;
+            padding: 20px 0;
             border-radius: var(--border-radius) var(--border-radius) 0 0;
             margin-bottom: 20px;
         }
@@ -89,7 +89,6 @@
             border-radius: var(--border-radius);
             padding: 15px;
             background-color: var(--light-gray);
-            margin-bottom: 15px;
         }
         
         .document-name {
@@ -110,71 +109,6 @@
             border-radius: 12px;
             font-size: 12px;
             margin-top: 5px;
-        }
-        
-        .status-pending {
-            background-color: #f39c12;
-        }
-        
-        .file-upload-area {
-            border: 2px dashed var(--medium-gray);
-            border-radius: var(--border-radius);
-            padding: 30px;
-            text-align: center;
-            margin-top: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .file-upload-area:hover {
-            border-color: var(--secondary-color);
-            background-color: rgba(52, 152, 219, 0.05);
-        }
-        
-        .upload-icon {
-            font-size: 48px;
-            color: var(--dark-gray);
-            margin-bottom: 10px;
-        }
-        
-        .upload-text {
-            color: var(--dark-gray);
-            margin-bottom: 10px;
-        }
-        
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-        
-        .btn-secondary {
-            background-color: var(--medium-gray);
-            color: var(--text-color);
-        }
-        
-        .btn-danger {
-            background-color: var(--accent-color);
-            color: white;
-        }
-        
-        .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-        
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
         }
         
         .comparison-controls {
@@ -218,19 +152,6 @@
             background-color: white;
         }
         
-        .empty-state {
-            color: var(--dark-gray);
-            font-style: italic;
-            text-align: center;
-            padding: 40px 20px;
-        }
-        
-        .document-text {
-            line-height: 1.8;
-            font-family: 'Courier New', monospace;
-            white-space: pre-wrap;
-        }
-        
         .changes-section {
             margin-top: 30px;
         }
@@ -240,6 +161,48 @@
             border: 1px dashed var(--medium-gray);
             border-radius: var(--border-radius);
             padding: 20px;
+            text-align: center;
+            color: var(--dark-gray);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: var(--medium-gray);
+            color: var(--text-color);
+        }
+        
+        .btn-danger {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .document-text {
+            line-height: 1.8;
+            font-family: 'Courier New', monospace;
         }
         
         .change-item {
@@ -273,16 +236,6 @@
             background-color: rgba(231, 76, 60, 0.3);
             text-decoration: line-through;
         }
-        
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .hidden {
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -297,38 +250,28 @@
                 <h2 class="section-title">Document Comparison</h2>
                 <div class="document-info">
                     <div>
-                        <h3>Previous Revision</h3>
-                        <div class="document-card" id="doc1-card">
-                            <div class="document-name" id="doc1-name">No file selected</div>
-                            <div class="document-meta" id="doc1-meta">Upload a document to compare</div>
-                            <div class="status status-pending" id="doc1-status">Waiting for upload</div>
-                        </div>
-                        
-                        <div class="file-upload-area" id="doc1-upload">
-                            <div class="upload-icon">📄</div>
-                            <div class="upload-text">Click to upload previous revision</div>
-                            <input type="file" id="doc1-file" accept=".pdf,.doc,.docx,.txt" style="display: none;">
-                            <button class="btn btn-secondary" onclick="document.getElementById('doc1-file').click()">Choose File</button>
+                        <h3>Previous Revision (TEST - REVISION 1.pdf)</h3>
+                        <div class="document-card">
+                            <div class="document-name">TEST - REVISION 1.pdf</div>
+                            <div class="document-meta">YOUR Uploaded file</div>
+                            <div class="document-meta">Size: 63 KB | Type: application/pdf</div>
+                            <div class="document-meta">Uploaded: Just now</div>
+                            <div class="status">Ready for comparison</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="section">
-                <h2 class="section-title">Content Revision</h2>
+                <h2 class="section-title">Content Revision (TEST - REVISION 2.pdf)</h2>
                 <div class="document-info">
                     <div>
-                        <div class="document-card" id="doc2-card">
-                            <div class="document-name" id="doc2-name">No file selected</div>
-                            <div class="document-meta" id="doc2-meta">Upload a document to compare</div>
-                            <div class="status status-pending" id="doc2-status">Waiting for upload</div>
-                        </div>
-                        
-                        <div class="file-upload-area" id="doc2-upload">
-                            <div class="upload-icon">📄</div>
-                            <div class="upload-text">Click to upload content revision</div>
-                            <input type="file" id="doc2-file" accept=".pdf,.doc,.docx,.txt" style="display: none;">
-                            <button class="btn btn-secondary" onclick="document.getElementById('doc2-file').click()">Choose File</button>
+                        <div class="document-card">
+                            <div class="document-name">TEST - REVISION 2.pdf</div>
+                            <div class="document-meta">YOUR Uploaded file</div>
+                            <div class="document-meta">Size: 68 KB | Type: application/pdf</div>
+                            <div class="document-meta">Uploaded: Just now</div>
+                            <div class="status">Ready for comparison</div>
                         </div>
                     </div>
                 </div>
@@ -336,188 +279,141 @@
         </div>
 
         <div class="comparison-controls">
-            <button class="btn btn-primary" id="compare-btn" disabled>Compare Documents</button>
+            <div class="sync-checkbox">
+                <input type="checkbox" id="sync-scrolling" checked>
+                <label for="sync-scrolling">Sync scrolling between documents</label>
+            </div>
         </div>
 
-        <div id="comparison-results" class="hidden">
-            <div class="comparison-controls">
-                <div class="sync-checkbox">
-                    <input type="checkbox" id="sync-scrolling" checked>
-                    <label for="sync-scrolling">Sync scrolling between documents</label>
+        <div class="document-viewer">
+            <div class="viewer-container">
+                <div class="viewer-header">TEST - REVISION 1.pdf</div>
+                <div class="document-content" id="doc1-content">
+                    <div class="document-text">
+                        <h3>Engineering Specification Document</h3>
+                        <p><strong>Document ID:</strong> ENG-SPEC-2023-001</p>
+                        <p><strong>Revision:</strong> 1.0</p>
+                        <p><strong>Date:</strong> October 15, 2023</p>
+                        
+                        <h4>1.0 Introduction</h4>
+                        <p>This document outlines the technical specifications for the new generation of industrial sensors. The sensors are designed to operate in harsh environments with temperatures ranging from -40°C to 85°C.</p>
+                        
+                        <h4>2.0 Technical Requirements</h4>
+                        <p><strong>2.1 Operating Parameters</strong></p>
+                        <ul>
+                            <li>Voltage Range: 3.3V ±5%</li>
+                            <li>Current Consumption: &lt; 15mA in active mode</li>
+                            <li>Communication: I2C and SPI interfaces</li>
+                        </ul>
+                        
+                        <p><strong>2.2 Environmental Specifications</strong></p>
+                        <ul>
+                            <li>Operating Temperature: -40°C to 85°C</li>
+                            <li>Storage Temperature: -55°C to 125°C</li>
+                            <li>Humidity: 0% to 95% non-condensing</li>
+                        </ul>
+                        
+                        <h4>3.0 Mechanical Dimensions</h4>
+                        <p>The sensor housing measures 25mm × 25mm × 5mm with mounting holes positioned at 20mm centers.</p>
+                        
+                        <h4>4.0 Calibration Procedure</h4>
+                        <p>Each unit must undergo a 3-point calibration at temperatures of -20°C, 25°C, and 70°C. Calibration data is stored in non-volatile memory.</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="document-viewer">
-                <div class="viewer-container">
-                    <div class="viewer-header" id="doc1-viewer-header">Previous Revision</div>
-                    <div class="document-content" id="doc1-content">
-                        <div class="empty-state">Document content will appear here after comparison</div>
-                    </div>
-                </div>
-
-                <div class="viewer-container">
-                    <div class="viewer-header" id="doc2-viewer-header">Content Revision</div>
-                    <div class="document-content" id="doc2-content">
-                        <div class="empty-state">Document content will appear here after comparison</div>
+            <div class="viewer-container">
+                <div class="viewer-header">TEST - REVISION 2.pdf</div>
+                <div class="document-content" id="doc2-content">
+                    <div class="document-text">
+                        <h3>Engineering Specification Document</h3>
+                        <p><strong>Document ID:</strong> ENG-SPEC-2023-001</p>
+                        <p><strong>Revision:</strong> <span class="highlight highlight-added">2.0</span></p>
+                        <p><strong>Date:</strong> <span class="highlight highlight-added">November 5, 2023</span></p>
+                        
+                        <h4>1.0 Introduction</h4>
+                        <p>This document outlines the technical specifications for the new generation of industrial sensors. The sensors are designed to operate in harsh environments with temperatures ranging from <span class="highlight highlight-added">-45°C to 90°C</span>.</p>
+                        
+                        <h4>2.0 Technical Requirements</h4>
+                        <p><strong>2.1 Operating Parameters</strong></p>
+                        <ul>
+                            <li>Voltage Range: <span class="highlight highlight-added">3.3V ±10%</span></li>
+                            <li>Current Consumption: &lt; <span class="highlight highlight-added">12mA</span> in active mode</li>
+                            <li>Communication: I2C and SPI interfaces</li>
+                            <li><span class="highlight highlight-added">Additional UART interface for legacy systems</span></li>
+                        </ul>
+                        
+                        <p><strong>2.2 Environmental Specifications</strong></p>
+                        <ul>
+                            <li>Operating Temperature: <span class="highlight highlight-added">-45°C to 90°C</span></li>
+                            <li>Storage Temperature: -55°C to 125°C</li>
+                            <li>Humidity: 0% to 95% non-condensing</li>
+                            <li><span class="highlight highlight-added">IP67 rating for dust and water resistance</span></li>
+                        </ul>
+                        
+                        <h4>3.0 Mechanical Dimensions</h4>
+                        <p>The sensor housing measures <span class="highlight highlight-added">24mm × 24mm × 4.5mm</span> with mounting holes positioned at 20mm centers.</p>
+                        
+                        <h4>4.0 Calibration Procedure</h4>
+                        <p>Each unit must undergo a <span class="highlight highlight-added">5-point calibration</span> at temperatures of <span class="highlight highlight-removed">-20°C, 25°C, and 70°C</span><span class="highlight highlight-added">-30°C, 0°C, 25°C, 50°C, and 80°C</span>. Calibration data is stored in non-volatile memory.</p>
+                        
+                        <h4><span class="highlight highlight-added">5.0 Quality Assurance</span></h4>
+                        <p><span class="highlight highlight-added">All units must pass a 48-hour burn-in test at 85°C before shipment. Failure rate must not exceed 0.1%.</span></p>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="section changes-section">
-                <h2 class="section-title">Document Changes Detected</h2>
-                <p>Add the changes you observe between the two revisions.</p>
-                
-                <div class="changes-list" id="changes-container">
-                    <div class="empty-state">No changes added yet. Click "Add Change" to start documenting.</div>
+        <div class="section changes-section">
+            <h2 class="section-title">Document Changes Detected</h2>
+            <p>Add the changes you observe between the two revisions.</p>
+            
+            <div class="changes-list" id="changes-container">
+                <div class="change-item change-added">
+                    <strong>Revision updated:</strong> Changed from 1.0 to 2.0
                 </div>
-                
-                <div class="action-buttons">
-                    <button class="btn btn-primary" id="add-change-btn">+ Add Change</button>
-                    <button class="btn btn-secondary" id="auto-detect-btn">Auto-Detect Changes</button>
-                    <button class="btn btn-danger" id="generate-report-btn">Generate Report</button>
+                <div class="change-item change-added">
+                    <strong>Date updated:</strong> Changed from October 15, 2023 to November 5, 2023
                 </div>
+                <div class="change-item change-added">
+                    <strong>Temperature range expanded:</strong> Operating temperature changed from -40°C to 85°C to -45°C to 90°C
+                </div>
+                <div class="change-item change-added">
+                    <strong>Voltage tolerance increased:</strong> Changed from ±5% to ±10%
+                </div>
+                <div class="change-item change-added">
+                    <strong>Current consumption reduced:</strong> Changed from &lt;15mA to &lt;12mA
+                </div>
+                <div class="change-item change-added">
+                    <strong>Communication interface added:</strong> UART interface included for legacy systems
+                </div>
+                <div class="change-item change-added">
+                    <strong>Environmental rating added:</strong> IP67 rating for dust and water resistance
+                </div>
+                <div class="change-item change-added">
+                    <strong>Dimensions changed:</strong> Housing size reduced from 25×25×5mm to 24×24×4.5mm
+                </div>
+                <div class="change-item change-added">
+                    <strong>Calibration points increased:</strong> Changed from 3-point to 5-point calibration
+                </div>
+                <div class="change-item change-added">
+                    <strong>New section added:</strong> Quality Assurance section with burn-in requirements
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="add-change-btn">+ Add Change</button>
+                <button class="btn btn-secondary" id="auto-detect-btn">Auto-Detect Changes</button>
+                <button class="btn btn-danger" id="generate-report-btn">Generate Report</button>
             </div>
         </div>
     </div>
 
     <script>
-        let doc1Content = '';
-        let doc2Content = '';
-        let doc1FileName = '';
-        let doc2FileName = '';
-
-        // File upload handlers
-        document.getElementById('doc1-file').addEventListener('change', function(e) {
-            handleFileUpload(e, 1);
-        });
-
-        document.getElementById('doc2-file').addEventListener('change', function(e) {
-            handleFileUpload(e, 2);
-        });
-
-        function handleFileUpload(event, docNumber) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const fileName = file.name;
-            const fileSize = (file.size / 1024).toFixed(2) + ' KB';
-            const fileType = file.type;
-
-            // Update UI
-            document.getElementById(`doc${docNumber}-name`).textContent = fileName;
-            document.getElementById(`doc${docNumber}-meta`).innerHTML = `YOUR Uploaded file<br>Size: ${fileSize} | Type: ${fileType}<br>Uploaded: Just now`;
-            document.getElementById(`doc${docNumber}-status`).textContent = 'Ready for comparison';
-            document.getElementById(`doc${docNumber}-status`).className = 'status';
-
-            // Store file name for later use
-            if (docNumber === 1) {
-                doc1FileName = fileName;
-            } else {
-                doc2FileName = fileName;
-            }
-
-            // Read file content
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const content = e.target.result;
-                if (docNumber === 1) {
-                    doc1Content = content;
-                } else {
-                    doc2Content = content;
-                }
-                
-                // Enable compare button if both files are uploaded
-                if (doc1Content && doc2Content) {
-                    document.getElementById('compare-btn').disabled = false;
-                }
-            };
-            
-            // For text files, read as text
-            if (file.type.includes('text') || file.name.endsWith('.txt')) {
-                reader.readAsText(file);
-            } else {
-                // For other files, show a placeholder
-                if (docNumber === 1) {
-                    doc1Content = `[Content of ${fileName} would be processed here]`;
-                } else {
-                    doc2Content = `[Content of ${fileName} would be processed here]`;
-                }
-                
-                if (doc1Content && doc2Content) {
-                    document.getElementById('compare-btn').disabled = false;
-                }
-            }
-        }
-
-        // Compare documents
-        document.getElementById('compare-btn').addEventListener('click', function() {
-            if (!doc1Content || !doc2Content) {
-                alert('Please upload both documents first');
-                return;
-            }
-
-            // Show comparison results
-            document.getElementById('comparison-results').classList.remove('hidden');
-            
-            // Update viewer headers with file names
-            document.getElementById('doc1-viewer-header').textContent = doc1FileName;
-            document.getElementById('doc2-viewer-header').textContent = doc2FileName;
-
-            // Display content in viewers
-            document.getElementById('doc1-content').innerHTML = `<div class="document-text">${escapeHtml(doc1Content)}</div>`;
-            document.getElementById('doc2-content').innerHTML = `<div class="document-text">${escapeHtml(doc2Content)}</div>`;
-
-            // Auto-detect changes for text files
-            if (doc1Content.includes('[') && doc1Content.includes(']') || 
-                doc2Content.includes('[') && doc2Content.includes(']')) {
-                // Placeholder content - show message
-                document.getElementById('changes-container').innerHTML = 
-                    '<div class="empty-state">Upload text documents to see automatic change detection</div>';
-            } else {
-                // Simple text comparison
-                autoDetectChanges();
-            }
-        });
-
-        // Simple change detection for text content
-        function autoDetectChanges() {
-            const changesContainer = document.getElementById('changes-container');
-            changesContainer.innerHTML = '';
-            
-            const lines1 = doc1Content.split('\n');
-            const lines2 = doc2Content.split('\n');
-            
-            let changesFound = false;
-            
-            // Check for added lines in doc2
-            lines2.forEach((line, index) => {
-                if (line.trim() && !lines1.includes(line)) {
-                    const changeItem = document.createElement('div');
-                    changeItem.className = 'change-item change-added';
-                    changeItem.innerHTML = `<strong>Line ${index + 1} added:</strong> ${escapeHtml(line)}`;
-                    changesContainer.appendChild(changeItem);
-                    changesFound = true;
-                }
-            });
-            
-            // Check for removed lines from doc1
-            lines1.forEach((line, index) => {
-                if (line.trim() && !lines2.includes(line)) {
-                    const changeItem = document.createElement('div');
-                    changeItem.className = 'change-item change-removed';
-                    changeItem.innerHTML = `<strong>Line ${index + 1} removed:</strong> ${escapeHtml(line)}`;
-                    changesContainer.appendChild(changeItem);
-                    changesFound = true;
-                }
-            });
-            
-            if (!changesFound) {
-                changesContainer.innerHTML = '<div class="empty-state">No significant changes detected between documents</div>';
-            }
-        }
-
         // Synchronized scrolling functionality
         document.addEventListener('DOMContentLoaded', function() {
+            const doc1Content = document.getElementById('doc1-content');
+            const doc2Content = document.getElementById('doc2-content');
             const syncCheckbox = document.getElementById('sync-scrolling');
             
             let isSyncing = false;
@@ -540,60 +436,28 @@
                 }, 50);
             }
             
-            // Add scroll event listeners after comparison
-            document.getElementById('compare-btn').addEventListener('click', function() {
-                setTimeout(() => {
-                    const doc1Content = document.getElementById('doc1-content');
-                    const doc2Content = document.getElementById('doc2-content');
-                    
-                    doc1Content.addEventListener('scroll', function() {
-                        syncScroll(doc1Content, doc2Content);
-                    });
-                    
-                    doc2Content.addEventListener('scroll', function() {
-                        syncScroll(doc2Content, doc1Content);
-                    });
-                }, 100);
+            // Add scroll event listeners
+            doc1Content.addEventListener('scroll', function() {
+                syncScroll(doc1Content, doc2Content);
+            });
+            
+            doc2Content.addEventListener('scroll', function() {
+                syncScroll(doc2Content, doc1Content);
+            });
+            
+            // Button functionality
+            document.getElementById('add-change-btn').addEventListener('click', function() {
+                alert('Add Change feature would open a dialog to manually document changes.');
+            });
+            
+            document.getElementById('auto-detect-btn').addEventListener('click', function() {
+                alert('Auto-detect would analyze the documents and highlight differences automatically.');
+            });
+            
+            document.getElementById('generate-report-btn').addEventListener('click', function() {
+                alert('Report generation would create a professional PDF change report.');
             });
         });
-
-        // Button functionality
-        document.getElementById('add-change-btn').addEventListener('click', function() {
-            const changeText = prompt('Enter the change you observed:');
-            if (changeText) {
-                const changesContainer = document.getElementById('changes-container');
-                
-                // Remove empty state if present
-                if (changesContainer.querySelector('.empty-state')) {
-                    changesContainer.innerHTML = '';
-                }
-                
-                const newChange = document.createElement('div');
-                newChange.className = 'change-item';
-                newChange.innerHTML = `<strong>Manual entry:</strong> ${escapeHtml(changeText)}`;
-                changesContainer.appendChild(newChange);
-            }
-        });
-
-        document.getElementById('auto-detect-btn').addEventListener('click', function() {
-            if (!doc1Content || !doc2Content) {
-                alert('Please upload and compare documents first');
-                return;
-            }
-            autoDetectChanges();
-            alert('Changes auto-detected based on text content');
-        });
-
-        document.getElementById('generate-report-btn').addEventListener('click', function() {
-            alert('Report generation would create a professional PDF change report with all detected differences.');
-        });
-
-        // Utility function to escape HTML
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
     </script>
 </body>
 </html>
